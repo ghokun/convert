@@ -1,6 +1,7 @@
 plugins {
     id 'application'
     id 'com.diffplug.spotless' version '6.12.0'
+    id 'org.graalvm.buildtools.native' version '0.9.19'
 }
 
 repositories {
@@ -13,7 +14,7 @@ dependencies {
     implementation 'info.picocli:picocli:4.7.0'
     annotationProcessor 'info.picocli:picocli-codegen:4.7.0'
 
-    implementation(platform('com.fasterxml.jackson:jackson-bom:2.14.1'))
+    implementation platform('com.fasterxml.jackson:jackson-bom:2.14.1')
     implementation 'com.fasterxml.jackson.core:jackson-core'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
@@ -22,8 +23,9 @@ dependencies {
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
-    testImplementation(platform('org.junit:junit-bom:5.9.1'))
-    testImplementation('org.junit.jupiter:junit-jupiter')
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'com.github.stefanbirkner:system-lambda:1.2.1'
 }
 
 application {
@@ -32,18 +34,36 @@ application {
     targetCompatibility = JavaVersion.VERSION_19
 }
 
+compileJava {
+    options.compilerArgs += [
+        "-Aproject=${project.name}"
+    ]
+}
+
+graalvmNative {
+    binaries.configureEach {
+        resources.autodetect()
+    }
+    toolchainDetection = false
+}
+
 test {
     useJUnitPlatform()
 }
 
 spotless {
+    java {
+        googleJavaFormat().aosp().reflowLongStrings()
+    }
+    groovyGradle {
+        target '*.gradle'
+        greclipse()
+        indentWithSpaces()
+    }
     format 'misc', {
-        target '*.gradle', '*.md', '.gitignore'
+        target '*.md', '.gitignore', '.gitattributes'
         trimTrailingWhitespace()
         indentWithSpaces()
         endWithNewline()
-    }
-    java {
-        googleJavaFormat().aosp().reflowLongStrings()
     }
 }

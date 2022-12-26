@@ -1,6 +1,6 @@
 [
 {
-  "name":"dev.gokhun.convert.App$Convert",
+  "name":"dev.gokhun.convert.Convert",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true
 },
@@ -95,5 +95,10 @@
 {
   "name":"java.time.ZonedDateTime",
   "methods":[{"name":"parse","parameterTypes":["java.lang.CharSequence"] }]
+},
+{
+  "name":"picocli.CommandLine$AutoHelpMixin",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true
 }
 ]

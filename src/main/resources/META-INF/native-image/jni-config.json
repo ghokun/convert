@@ -1,6 +1,6 @@
 [
 {
-  "name":"dev.gokhun.convert.App",
+  "name":"dev.gokhun.convert.Convert",
   "methods":[{"name":"main","parameterTypes":["java.lang.String[]"] }]
 },
 {

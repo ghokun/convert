@@ -1,16 +1,20 @@
 package dev.gokhun.convert;
 
 import static com.google.common.io.Files.getFileExtension;
-import static java.util.Arrays.stream;
+import static dev.gokhun.convert.FileUtil.FileType.mapperForFileType;
 import static java.util.Objects.requireNonNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.fasterxml.jackson.dataformat.toml.TomlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Locale;
 import java.util.function.Supplier;
 
 final class FileUtil {
@@ -18,21 +22,26 @@ final class FileUtil {
     FileUtil() {}
 
     enum FileType {
-        // CSV(CsvMapper::new), TODO add CSV support
-        JSON(JsonMapper::new),
-        PROPERTIES(JavaPropsMapper::new),
-        TOML(TomlMapper::new),
-        YAML(YAMLMapper::new);
+        CSV(CsvMapper::new, ImmutableSet.of("csv")),
+        JSON(JsonMapper::new, ImmutableSet.of("json")),
+        PROPERTIES(JavaPropsMapper::new, ImmutableSet.of("properties")),
+        TOML(TomlMapper::new, ImmutableSet.of("toml")),
+        YAML(YAMLMapper::new, ImmutableSet.of("yaml", "yml"));
 
         private final Supplier<ObjectMapper> mapperSupplier;
+        private final ImmutableSet<String> extensions;
 
-        FileType(Supplier<ObjectMapper> mapperSupplier) {
+        FileType(Supplier<ObjectMapper> mapperSupplier, ImmutableSet<String> extensions) {
             this.mapperSupplier = mapperSupplier;
+            this.extensions = extensions;
         }
 
-        static ObjectMapper fromFileExtension(String fileExtension) {
-            return stream(FileType.values())
-                    .filter(f -> f.name().equals(fileExtension.toUpperCase()))
+        static ObjectMapper mapperForFileType(String fileExtension) {
+            if (fileExtension == null || fileExtension.isBlank()) {
+                throw new IllegalArgumentException("File type could not be determined!");
+            }
+            return Arrays.stream(values())
+                    .filter(f -> f.extensions.contains(fileExtension.toLowerCase(Locale.ENGLISH)))
                     .findAny()
                     .orElseThrow(
                             () ->
@@ -44,14 +53,25 @@ final class FileUtil {
         }
     }
 
-    static void convert(File input, File output) throws IOException {
+    record ConversionOptions(String separator, boolean pretty) {
+        ConversionOptions {
+            requireNonNull(separator);
+        }
+    }
+
+    static void convert(File input, File output, ConversionOptions options) throws IOException {
         requireNonNull(input);
         requireNonNull(output);
 
-        var inputMapper = FileType.fromFileExtension(getFileExtension(input.getName()));
-        var outputMapper = FileType.fromFileExtension(getFileExtension(output.getName()));
+        var inputMapper = mapperForFileType(getFileExtension(input.getName()));
+        var outputMapper = mapperForFileType(getFileExtension(output.getName()));
 
         var data = inputMapper.readTree(input);
-        outputMapper.writeValue(output, data);
+
+        var writer =
+                options.pretty()
+                        ? outputMapper.writerWithDefaultPrettyPrinter()
+                        : outputMapper.writer();
+        writer.writeValue(output, data);
     }
 }

@@ -2,8 +2,8 @@ package dev.gokhun.convert;
 
 import static dev.gokhun.convert.FileUtil.ConversionOptions;
 import static dev.gokhun.convert.FileUtil.FileType;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +29,7 @@ final class FileUtilTest {
             Class<? extends ObjectMapper> expectedMapper, ImmutableSet<String> fileExtensions) {
         for (String fileExtension : fileExtensions) {
             var actualMapper = FileType.mapperForFileType(fileExtension);
-            assertInstanceOf(expectedMapper, actualMapper);
+            assertThat(actualMapper).isInstanceOf(expectedMapper);
         }
     }
 
@@ -38,13 +38,16 @@ final class FileUtilTest {
     @DisplayName("Should throw exception on invalid file extensions")
     void mapperForFileType1(
             String fileExtension, Class<? extends Throwable> exception, String message) {
-        assertThrows(exception, () -> FileType.mapperForFileType(fileExtension), message);
+        assertThatThrownBy(() -> FileType.mapperForFileType(fileExtension))
+                .isInstanceOf(exception)
+                .withFailMessage(message);
     }
 
     @Test
     @DisplayName("Should throw exception on empty separator")
     void conversionOptions1() {
-        assertThrows(NullPointerException.class, () -> new ConversionOptions(null, false));
+        assertThatThrownBy(() -> new ConversionOptions(null, false))
+                .isInstanceOf(NullPointerException.class);
     }
 
     private static Stream<Arguments> validFileExtensionProvider() {

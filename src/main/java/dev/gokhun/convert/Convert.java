@@ -20,6 +20,7 @@ import picocli.CommandLine.Option;
         exitCodeOnInvalidInput = OK,
         mixinStandardHelpOptions = true,
         name = "convert",
+        description = "Converts one file type to another.",
         sortOptions = false,
         usageHelpWidth = 120)
 public class Convert implements Callable<Integer> {
@@ -29,14 +30,14 @@ public class Convert implements Callable<Integer> {
             names = {"-i", "--input"},
             required = true,
             order = 1,
-            description = "File to convert from")
+            description = "File to convert from.")
     File input;
 
     @Option(
             names = {"-o", "--output"},
             required = true,
             order = 2,
-            description = "File to convert into")
+            description = "File to convert into.")
     File output;
 
     @Option(

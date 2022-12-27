@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.fasterxml.jackson.dataformat.toml.TomlMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.common.collect.ImmutableSet;
 import java.io.File;
@@ -26,7 +27,7 @@ final class FileUtil {
         JSON(JsonMapper::new, ImmutableSet.of("json")),
         PROPERTIES(JavaPropsMapper::new, ImmutableSet.of("properties")),
         TOML(TomlMapper::new, ImmutableSet.of("toml")),
-        YAML(YAMLMapper::new, ImmutableSet.of("yaml", "yml"));
+        YAML(FileType::yamlMapper, ImmutableSet.of("yaml", "yml"));
 
         private final Supplier<ObjectMapper> mapperSupplier;
         private final ImmutableSet<String> extensions;
@@ -50,6 +51,13 @@ final class FileUtil {
                                                     "Unsupported file type! [%s]", fileExtension)))
                     .mapperSupplier
                     .get();
+        }
+
+        private static ObjectMapper yamlMapper() {
+            return new YAMLMapper()
+                    .configure(YAMLGenerator.Feature.INDENT_ARRAYS, true)
+                    .configure(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR, true)
+                    .configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true);
         }
     }
 

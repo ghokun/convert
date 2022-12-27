@@ -1,17 +1,24 @@
 package dev.gokhun.convert;
 
+import static com.google.common.io.Files.getFileExtension;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static picocli.CommandLine.ExitCode.OK;
 
+import com.google.common.collect.ImmutableSet;
 import dev.gokhun.convert.Convert.ExecutionExceptionHandler;
 import dev.gokhun.convert.Convert.SystemManager;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import picocli.CommandLine;
 
 final class ConvertTest {
@@ -46,8 +53,44 @@ Converts one file type to another.
     }
 
     @Nested
-    class FromJson {
+    class ConversionTests {
+        @TempDir File outputDirectory;
 
+        @ParameterizedTest
+        @MethodSource("inputOutputProvider")
+        @DisplayName("Should convert from input to output correctly")
+        void conversion1(String input, String output, String expected) {
+            var outputPath = outputDirectory.getAbsolutePath() + output;
+            var systemManager = new MockSystemManager();
+            systemManager.exit(
+                    new CommandLine(new Convert())
+                            .setOut(systemManager.getOut())
+                            .setErr(systemManager.getErr())
+                            .setExecutionExceptionHandler(new ExecutionExceptionHandler())
+                            .execute("-i", getTestResourcePath(input), "-o", outputPath));
+
+            assertThat(new File(outputPath))
+                    .hasSameTextualContentAs(new File(getTestResourcePath(expected)));
+        }
+
+        private static Stream<Arguments> inputOutputProvider() {
+            var inputs =
+                    ImmutableSet.of(
+                            "json/mini1.json",
+                            "properties/mini1.properties",
+                            "toml/mini1.toml",
+                            "yaml/mini1.yaml");
+            return inputs.stream()
+                    .flatMap(input -> inputs.stream().map(output -> toArguments(input, output)));
+        }
+
+        private static Arguments toArguments(String input, String output) {
+            return arguments(input, "/actual." + getFileExtension(output), output);
+        }
+    }
+
+    @Nested
+    class JsonTests {
         @TempDir File outputDirectory;
 
         @Test
@@ -74,24 +117,6 @@ Converts one file type to another.
             String input = getTestResourcePath("json/pretty1.json");
             String output = outputDirectory.getAbsolutePath() + "/actual.json";
             String expected = getTestResourcePath("json/mini1.json");
-
-            var systemManager = new MockSystemManager();
-            systemManager.exit(
-                    new CommandLine(new Convert())
-                            .setOut(systemManager.getOut())
-                            .setErr(systemManager.getErr())
-                            .setExecutionExceptionHandler(new ExecutionExceptionHandler())
-                            .execute("-i", input, "-o", output));
-
-            assertThat(new File(output)).hasSameTextualContentAs(new File(expected));
-        }
-
-        @Test
-        @DisplayName("Should convert JSON to YAML")
-        void fromJson3() {
-            String input = getTestResourcePath("json/mini1.json");
-            String output = outputDirectory.getAbsolutePath() + "/actual.yaml";
-            String expected = getTestResourcePath("yaml/mini1.yaml");
 
             var systemManager = new MockSystemManager();
             systemManager.exit(

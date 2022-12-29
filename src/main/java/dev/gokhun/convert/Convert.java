@@ -27,7 +27,16 @@ import picocli.CommandLine.Option;
         usageHelpWidth = 120,
         versionProvider = VersionProvider.class)
 public final class Convert implements Callable<Integer> {
+    private static final SystemManager systemManager = new DefaultSystemManager();
     private static final ColorScheme colorScheme = defaultColorScheme(ON);
+    private static final IExecutionExceptionHandler exceptionHandler =
+            new ExecutionExceptionHandler();
+    private static final CommandLine cmd =
+            new CommandLine(new Convert())
+                    .setOut(systemManager.getOut())
+                    .setErr(systemManager.getErr())
+                    .setExecutionExceptionHandler(exceptionHandler)
+                    .setColorScheme(colorScheme);
 
     @Option(
             names = {"--input", "-i"},
@@ -68,14 +77,7 @@ public final class Convert implements Callable<Integer> {
     }
 
     public static void main(String... args) {
-        SystemManager systemManager = new DefaultSystemManager();
-        systemManager.exit(
-                new CommandLine(new Convert())
-                        .setOut(systemManager.getOut())
-                        .setErr(systemManager.getErr())
-                        .setExecutionExceptionHandler(new ExecutionExceptionHandler())
-                        .setColorScheme(colorScheme)
-                        .execute(args));
+        systemManager.exit(cmd.execute(args));
     }
 
     interface SystemManager {

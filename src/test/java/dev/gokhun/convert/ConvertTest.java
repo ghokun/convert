@@ -24,8 +24,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import picocli.CommandLine;
+import picocli.CommandLine.IExecutionExceptionHandler;
 
 final class ConvertTest {
+    private static final IExecutionExceptionHandler exceptionHandler =
+            new ExecutionExceptionHandler();
     private static final String SEMVER_REGEX =
             "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$";
 
@@ -37,7 +40,7 @@ final class ConvertTest {
                 new CommandLine(new Convert())
                         .setOut(systemManager.getOut())
                         .setErr(systemManager.getErr())
-                        .setExecutionExceptionHandler(new ExecutionExceptionHandler())
+                        .setExecutionExceptionHandler(exceptionHandler)
                         .execute("-V"));
 
         assertThat(systemManager.getExitStatus()).isEqualTo(OK);
@@ -53,7 +56,7 @@ final class ConvertTest {
                 new CommandLine(new Convert())
                         .setOut(systemManager.getOut())
                         .setErr(systemManager.getErr())
-                        .setExecutionExceptionHandler(new ExecutionExceptionHandler())
+                        .setExecutionExceptionHandler(exceptionHandler)
                         .execute());
 
         assertThat(systemManager.getExitStatus()).isEqualTo(USAGE);
@@ -88,7 +91,7 @@ Converts one file type to another.
                     new CommandLine(new Convert())
                             .setOut(systemManager.getOut())
                             .setErr(systemManager.getErr())
-                            .setExecutionExceptionHandler(new ExecutionExceptionHandler())
+                            .setExecutionExceptionHandler(exceptionHandler)
                             .execute("-i", getTestResourcePath(input), "-o", outputPath));
 
             assertThat(systemManager.getExitStatus()).isEqualTo(OK);
@@ -128,7 +131,7 @@ Converts one file type to another.
                     new CommandLine(new Convert())
                             .setOut(systemManager.getOut())
                             .setErr(systemManager.getErr())
-                            .setExecutionExceptionHandler(new ExecutionExceptionHandler())
+                            .setExecutionExceptionHandler(exceptionHandler)
                             .execute("-i", input, "-o", output, "--pretty"));
 
             assertThat(systemManager.getExitStatus()).isEqualTo(OK);
@@ -147,7 +150,7 @@ Converts one file type to another.
                     new CommandLine(new Convert())
                             .setOut(systemManager.getOut())
                             .setErr(systemManager.getErr())
-                            .setExecutionExceptionHandler(new ExecutionExceptionHandler())
+                            .setExecutionExceptionHandler(exceptionHandler)
                             .execute("-i", input, "-o", output));
 
             assertThat(systemManager.getExitStatus()).isEqualTo(OK);

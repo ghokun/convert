@@ -33,9 +33,9 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-params"
     testImplementation "org.assertj:assertj-core:${assertjVersion}"
 
-    errorprone("com.google.errorprone:error_prone_core:${errorProneVersion}")
-    errorprone("tech.picnic.error-prone-support:error-prone-contrib:${errorProneSupportVersion}")
-    errorprone("tech.picnic.error-prone-support:refaster-runner:${errorProneSupportVersion}")
+    errorprone "com.google.errorprone:error_prone_core:${errorProneVersion}"
+    errorprone "tech.picnic.error-prone-support:error-prone-contrib:${errorProneSupportVersion}"
+    errorprone "tech.picnic.error-prone-support:refaster-runner:${errorProneSupportVersion}"
 }
 
 application {

@@ -1,13 +1,16 @@
 package dev.gokhun.convert;
 
 import static dev.gokhun.convert.FileUtil.convert;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static picocli.CommandLine.ExitCode.OK;
 import static picocli.CommandLine.Help.Ansi.ON;
 import static picocli.CommandLine.Help.defaultColorScheme;
 
 import dev.gokhun.convert.FileUtil.ConversionOptions;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
@@ -17,38 +20,38 @@ import picocli.CommandLine.IExecutionExceptionHandler;
 import picocli.CommandLine.Option;
 
 @Command(
-        exitCodeOnInvalidInput = OK,
         mixinStandardHelpOptions = true,
         name = "convert",
         description = "Converts one file type to another.",
         sortOptions = false,
-        usageHelpWidth = 120)
-public class Convert implements Callable<Integer> {
+        usageHelpWidth = 120,
+        versionProvider = VersionProvider.class)
+public final class Convert implements Callable<Integer> {
     private static final ColorScheme colorScheme = defaultColorScheme(ON);
 
     @Option(
-            names = {"-i", "--input"},
+            names = {"--input", "-i"},
             required = true,
             order = 1,
             description = "File to convert from.")
     File input;
 
     @Option(
-            names = {"-o", "--output"},
+            names = {"--output", "-o"},
             required = true,
             order = 2,
             description = "File to convert into.")
     File output;
 
     @Option(
-            names = {"-s", "--separator"},
+            names = {"--separator", "-s"},
             order = 3,
             defaultValue = ",",
             description = "Character(s) to separate CSV columns. Default value is ','.")
     String separator;
 
     @Option(
-            names = {"--pretty"},
+            names = "--pretty",
             order = 4,
             defaultValue = "false",
             description = "Prettify output if possible. Default is false and output is minimized.")
@@ -84,8 +87,11 @@ public class Convert implements Callable<Integer> {
     }
 
     static final class DefaultSystemManager implements SystemManager {
-        private final PrintWriter out = new PrintWriter(System.out);
-        private final PrintWriter err = new PrintWriter(System.err);
+        private final PrintWriter out =
+                new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.out, UTF_8)));
+
+        private final PrintWriter err =
+                new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.err, UTF_8)));
 
         @Override
         public PrintWriter getOut() {

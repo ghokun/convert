@@ -5,6 +5,12 @@
   "queryAllDeclaredMethods":true
 },
 {
+  "name":"dev.gokhun.convert.VersionProvider",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"groovy.lang.Closure"
 },
 {

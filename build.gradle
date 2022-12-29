@@ -1,67 +1,104 @@
 plugins {
-    id 'application'
-    id 'com.diffplug.spotless' version '6.12.0'
-    id 'org.graalvm.buildtools.native' version '0.9.19'
-    id 'org.jreleaser' version '1.3.1'
+    id "application"
+    id "checkstyle"
+    id "com.diffplug.spotless" version "${spotlessVersion}"
+    id "net.ltgt.errorprone" version "${errorPronePluginVersion}"
+    id "org.graalvm.buildtools.native" version "${graalvmBuildtoolsVersion}"
+    id "org.jreleaser" version "${jreleaserVersion}"
 }
 
-group = 'dev.gokhun'
-version = '0.0.1'
+group = "dev.gokhun"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation 'com.google.guava:guava:31.1-jre'
+    implementation "com.google.guava:guava:${guavaVersion}"
 
-    implementation 'info.picocli:picocli:4.7.0'
-    annotationProcessor 'info.picocli:picocli-codegen:4.7.0'
+    implementation "info.picocli:picocli:${picocliVersion}"
+    annotationProcessor "info.picocli:picocli-codegen:${picocliVersion}"
 
-    implementation platform('com.fasterxml.jackson:jackson-bom:2.14.1')
-    implementation 'com.fasterxml.jackson.core:jackson-core'
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-properties'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
+    implementation platform("com.fasterxml.jackson:jackson-bom:${jacksonVersion}")
+    implementation "com.fasterxml.jackson.core:jackson-core"
+    implementation "com.fasterxml.jackson.core:jackson-databind"
+    implementation "com.fasterxml.jackson.core:jackson-annotations"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-csv"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
 
-    testImplementation platform('org.junit:junit-bom:5.9.1')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params'
-    testImplementation 'org.assertj:assertj-core:3.23.1'
+    testImplementation platform("org.junit:junit-bom:${junitVersion}")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testImplementation "org.junit.jupiter:junit-jupiter-params"
+    testImplementation "org.assertj:assertj-core:${assertjVersion}"
+
+    errorprone("com.google.errorprone:error_prone_core:${errorProneVersion}")
+    errorprone("tech.picnic.error-prone-support:error-prone-contrib:${errorProneSupportVersion}")
+    errorprone("tech.picnic.error-prone-support:refaster-runner:${errorProneSupportVersion}")
 }
 
 application {
-    mainClass = 'dev.gokhun.convert.Convert'
+    mainClass = "dev.gokhun.convert.Convert"
     sourceCompatibility = JavaVersion.VERSION_19
     targetCompatibility = JavaVersion.VERSION_19
 }
 
+def generatedSources = "${buildDir}/generated"
+
+tasks.register("generateVersionProvider") {
+    doFirst {
+        def versionProvider = file("${generatedSources}/dev/gokhun/convert/VersionProvider.java")
+        versionProvider.parentFile.mkdirs()
+        versionProvider.text =
+                """
+package dev.gokhun.convert;
+
+final class VersionProvider implements picocli.CommandLine.IVersionProvider {
+    @Override
+    public String[] getVersion() throws Exception {
+        return new String[] {"${project.version}"};
+    }
+}
+"""
+    }
+}
+
+sourceSets.main.java.srcDirs += generatedSources
+
 compileJava {
+    dependsOn("generateVersionProvider")
     options.compilerArgs += [
-        "-Aproject=${project.group}/${project.name}"
+        "-Aproject=${project.group}/${project.name}",
+        "-Werror"
     ]
+    options.errorprone.disableWarningsInGeneratedCode = true
 }
 
 test {
     useJUnitPlatform()
 }
 
+checkstyle {
+    configFile file("${project.rootDir}/checkstyle.xml")
+    checkstyleMain.source = "src/main/java"
+    checkstyleTest.source = "src/test/java"
+}
+
 spotless {
     java {
         googleJavaFormat().aosp().reflowLongStrings()
+        target "src/*/java/**/*.java"
     }
     groovyGradle {
-        target '*.gradle'
+        target "*.gradle"
         greclipse()
         trimTrailingWhitespace()
         indentWithSpaces()
         endWithNewline()
     }
-    format 'misc', {
-        target '*.md', '.gitignore', '.gitattributes'
+    format "misc", {
+        target "*.md", ".gitignore", ".gitattributes"
         trimTrailingWhitespace()
         indentWithSpaces()
         endWithNewline()
@@ -73,6 +110,4 @@ graalvmNative {
         resources.autodetect()
     }
     toolchainDetection = false
-    nativeRun {
-    }
 }

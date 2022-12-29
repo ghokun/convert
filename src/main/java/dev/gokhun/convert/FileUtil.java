@@ -1,5 +1,6 @@
 package dev.gokhun.convert;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.io.Files.getFileExtension;
 import static dev.gokhun.convert.FileUtil.FileType.mapperForFileType;
 import static java.util.Objects.requireNonNull;
@@ -20,27 +21,57 @@ import java.util.function.Supplier;
 
 final class FileUtil {
 
-    FileUtil() {}
+    private FileUtil() {}
 
     enum FileType {
-        CSV(CsvMapper::new, ImmutableSet.of("csv")),
-        JSON(JsonMapper::new, ImmutableSet.of("json")),
-        PROPERTIES(JavaPropsMapper::new, ImmutableSet.of("properties")),
-        TOML(TomlMapper::new, ImmutableSet.of("toml")),
-        YAML(FileType::yamlMapper, ImmutableSet.of("yaml", "yml"));
+        CSV(ImmutableSet.of("csv")) {
+            @Override
+            Supplier<ObjectMapper> supplyMapper() {
+                return CsvMapper::new;
+            }
+        },
+        JSON(ImmutableSet.of("json")) {
+            @Override
+            Supplier<ObjectMapper> supplyMapper() {
+                return JsonMapper::new;
+            }
+        },
+        PROPERTIES(ImmutableSet.of("properties")) {
+            @Override
+            Supplier<ObjectMapper> supplyMapper() {
+                return JavaPropsMapper::new;
+            }
+        },
+        TOML(ImmutableSet.of("toml")) {
+            @Override
+            Supplier<ObjectMapper> supplyMapper() {
+                return TomlMapper::new;
+            }
+        },
+        YAML(ImmutableSet.of("yaml", "yml")) {
+            @Override
+            Supplier<ObjectMapper> supplyMapper() {
+                return () ->
+                        // TODO get these from command line
+                        new YAMLMapper()
+                                .configure(YAMLGenerator.Feature.INDENT_ARRAYS, true)
+                                .configure(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR, true)
+                                .configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true);
+            }
+        };
 
-        private final Supplier<ObjectMapper> mapperSupplier;
         private final ImmutableSet<String> extensions;
 
-        FileType(Supplier<ObjectMapper> mapperSupplier, ImmutableSet<String> extensions) {
-            this.mapperSupplier = mapperSupplier;
+        FileType(ImmutableSet<String> extensions) {
             this.extensions = extensions;
         }
 
+        abstract Supplier<ObjectMapper> supplyMapper();
+
         static ObjectMapper mapperForFileType(String fileExtension) {
-            if (fileExtension == null || fileExtension.isBlank()) {
-                throw new IllegalArgumentException("File type could not be determined!");
-            }
+            checkArgument(
+                    fileExtension != null && !fileExtension.isBlank(),
+                    "File type could not be determined!");
             return Arrays.stream(values())
                     .filter(f -> f.extensions.contains(fileExtension.toLowerCase(Locale.ENGLISH)))
                     .findAny()
@@ -49,15 +80,8 @@ final class FileUtil {
                                     new IllegalArgumentException(
                                             String.format(
                                                     "Unsupported file type! [%s]", fileExtension)))
-                    .mapperSupplier
+                    .supplyMapper()
                     .get();
-        }
-
-        private static ObjectMapper yamlMapper() {
-            return new YAMLMapper()
-                    .configure(YAMLGenerator.Feature.INDENT_ARRAYS, true)
-                    .configure(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR, true)
-                    .configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true);
         }
     }
 
@@ -67,6 +91,7 @@ final class FileUtil {
         }
     }
 
+    // TODO Just a dummy implementation for now. Consider using java.nio.
     static void convert(File input, File output, ConversionOptions options) throws IOException {
         requireNonNull(input);
         requireNonNull(output);

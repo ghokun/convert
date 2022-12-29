@@ -1,15 +1,19 @@
 package dev.gokhun.convert;
 
 import static com.google.common.io.Files.getFileExtension;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static picocli.CommandLine.ExitCode.OK;
+import static picocli.CommandLine.ExitCode.USAGE;
 
 import com.google.common.collect.ImmutableSet;
 import dev.gokhun.convert.Convert.ExecutionExceptionHandler;
 import dev.gokhun.convert.Convert.SystemManager;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
@@ -22,10 +26,28 @@ import org.junit.jupiter.params.provider.MethodSource;
 import picocli.CommandLine;
 
 final class ConvertTest {
+    private static final String SEMVER_REGEX =
+            "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$";
 
+    @DisplayName("Should get version")
     @Test
+    void version1() {
+        var systemManager = new MockSystemManager();
+        systemManager.exit(
+                new CommandLine(new Convert())
+                        .setOut(systemManager.getOut())
+                        .setErr(systemManager.getErr())
+                        .setExecutionExceptionHandler(new ExecutionExceptionHandler())
+                        .execute("-V"));
+
+        assertThat(systemManager.getExitStatus()).isEqualTo(OK);
+        assertThat(systemManager.getOutput().trim()).matches(SEMVER_REGEX);
+        assertThat(systemManager.getError()).isEmpty();
+    }
+
     @DisplayName("Should show help when no argument is provided")
-    void invalid1() {
+    @Test
+    void help1() {
         var systemManager = new MockSystemManager();
         systemManager.exit(
                 new CommandLine(new Convert())
@@ -34,7 +56,7 @@ final class ConvertTest {
                         .setExecutionExceptionHandler(new ExecutionExceptionHandler())
                         .execute());
 
-        assertThat(systemManager.getExitStatus()).isEqualTo(OK);
+        assertThat(systemManager.getExitStatus()).isEqualTo(USAGE);
         assertThat(systemManager.getOutput()).isEmpty();
         assertThat(systemManager.getError())
                 .isEqualTo(
@@ -53,12 +75,12 @@ Converts one file type to another.
     }
 
     @Nested
-    class ConversionTests {
+    static final class ConversionTests {
         @TempDir File outputDirectory;
 
-        @ParameterizedTest
-        @MethodSource("inputOutputProvider")
         @DisplayName("Should convert from input to output correctly")
+        @MethodSource("inputOutputProvider")
+        @ParameterizedTest
         void conversion1(String input, String output, String expected) {
             var outputPath = outputDirectory.getAbsolutePath() + output;
             var systemManager = new MockSystemManager();
@@ -69,6 +91,7 @@ Converts one file type to another.
                             .setExecutionExceptionHandler(new ExecutionExceptionHandler())
                             .execute("-i", getTestResourcePath(input), "-o", outputPath));
 
+            assertThat(systemManager.getExitStatus()).isEqualTo(OK);
             assertThat(new File(outputPath))
                     .hasSameTextualContentAs(new File(getTestResourcePath(expected)));
         }
@@ -90,11 +113,11 @@ Converts one file type to another.
     }
 
     @Nested
-    class JsonTests {
+    static final class JsonTests {
         @TempDir File outputDirectory;
 
-        @Test
         @DisplayName("Should prettify mini JSON")
+        @Test
         void fromJson1() {
             String input = getTestResourcePath("json/mini1.json");
             String output = outputDirectory.getAbsolutePath() + "/actual.json";
@@ -108,11 +131,12 @@ Converts one file type to another.
                             .setExecutionExceptionHandler(new ExecutionExceptionHandler())
                             .execute("-i", input, "-o", output, "--pretty"));
 
+            assertThat(systemManager.getExitStatus()).isEqualTo(OK);
             assertThat(new File(output)).hasSameTextualContentAs(new File(expected));
         }
 
-        @Test
         @DisplayName("Should minimize pretty JSON")
+        @Test
         void fromJson2() {
             String input = getTestResourcePath("json/pretty1.json");
             String output = outputDirectory.getAbsolutePath() + "/actual.json";
@@ -126,6 +150,7 @@ Converts one file type to another.
                             .setExecutionExceptionHandler(new ExecutionExceptionHandler())
                             .execute("-i", input, "-o", output));
 
+            assertThat(systemManager.getExitStatus()).isEqualTo(OK);
             assertThat(new File(output)).hasSameTextualContentAs(new File(expected));
         }
     }
@@ -137,12 +162,12 @@ Converts one file type to another.
 
         @Override
         public PrintWriter getOut() {
-            return new PrintWriter(out);
+            return new PrintWriter(new BufferedWriter(new OutputStreamWriter(out, UTF_8)));
         }
 
         @Override
         public PrintWriter getErr() {
-            return new PrintWriter(err);
+            return new PrintWriter(new BufferedWriter(new OutputStreamWriter(err, UTF_8)));
         }
 
         @Override
@@ -155,11 +180,11 @@ Converts one file type to another.
         }
 
         public String getOutput() {
-            return out.toString();
+            return out.toString(UTF_8);
         }
 
         public String getError() {
-            return err.toString();
+            return err.toString(UTF_8);
         }
     }
 

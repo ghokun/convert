@@ -22,9 +22,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 final class FileUtilTest {
 
-    @ParameterizedTest
-    @MethodSource("validFileExtensionProvider")
     @DisplayName("Should return correct mapper for file extension")
+    @MethodSource("validFileExtensionProvider")
+    @ParameterizedTest
     void mapperForFileType1(
             Class<? extends ObjectMapper> expectedMapper, ImmutableSet<String> fileExtensions) {
         for (String fileExtension : fileExtensions) {
@@ -33,18 +33,19 @@ final class FileUtilTest {
         }
     }
 
-    @ParameterizedTest
-    @MethodSource("invalidFileExtensionProvider")
     @DisplayName("Should throw exception on invalid file extensions")
+    @MethodSource("invalidFileExtensionProvider")
+    @ParameterizedTest
     void mapperForFileType1(
             String fileExtension, Class<? extends Throwable> exception, String message) {
-        assertThatThrownBy(() -> FileType.mapperForFileType(fileExtension))
-                .isInstanceOf(exception)
-                .withFailMessage(message);
+        var unused =
+                assertThatThrownBy(() -> FileType.mapperForFileType(fileExtension))
+                        .isInstanceOf(exception)
+                        .withFailMessage(message);
     }
 
-    @Test
     @DisplayName("Should throw exception on empty separator")
+    @Test
     void conversionOptions1() {
         assertThatThrownBy(() -> new ConversionOptions(null, false))
                 .isInstanceOf(NullPointerException.class);

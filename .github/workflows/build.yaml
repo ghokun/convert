@@ -1,3 +1,4 @@
+# TODO Remove this file after jreleaser setup
 name: GraalVM Native Image builds
 on: [ push, pull_request ]
 jobs:
@@ -6,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ macos-latest, windows-latest, ubuntu-latest ]
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
     steps:
       - uses: actions/checkout@v3
 
@@ -18,5 +19,29 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
 
-      - name: Build
-        run: ./build.sh
+      - name: Check
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+              ./gradlew.bat check --stacktrace
+          else
+              ./gradlew check --stacktrace
+          fi
+        shell: bash
+
+      - name: Native test
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+              ./gradlew.bat nativeTest --stacktrace
+          else
+              ./gradlew nativeTest --stacktrace
+          fi
+        shell: bash
+
+      - name: Native compile
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+              ./gradlew.bat nativeCompile --stacktrace
+          else
+              ./gradlew nativeCompile --stacktrace
+          fi
+        shell: bash

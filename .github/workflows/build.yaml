@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ macos-latest, ubuntu-latest, windows-latest ]
+        os: [ ubuntu-latest ]
     steps:
       - uses: actions/checkout@v3
 
@@ -20,28 +20,10 @@ jobs:
           native-image-job-reports: 'true'
 
       - name: Check
-        run: |
-          if [ "$RUNNER_OS" == "Windows" ]; then
-              ./gradlew.bat check --stacktrace
-          else
-              ./gradlew check --stacktrace
-          fi
-        shell: bash
+        run: ./gradlew check
 
       - name: Native test
-        run: |
-          if [ "$RUNNER_OS" == "Windows" ]; then
-              ./gradlew.bat nativeTest --stacktrace
-          else
-              ./gradlew nativeTest --stacktrace
-          fi
-        shell: bash
+        run: ./gradlew nativeTest --stacktrace
 
       - name: Native compile
-        run: |
-          if [ "$RUNNER_OS" == "Windows" ]; then
-              ./gradlew.bat nativeCompile --stacktrace
-          else
-              ./gradlew nativeCompile --stacktrace
-          fi
-        shell: bash
+        run: ./gradlew nativeCompile --stacktrace

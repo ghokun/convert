@@ -1,0 +1,8 @@
+json = ['rigid', 'better for data interchange']
+paragraph = "Blank lines denote\nparagraph breaks\n"
+alias_reuse.bar = 'baz'
+yaml = ['slim and flexible', 'better for configuration']
+content = "Or we\ncan auto\nconvert line breaks\nto save space"
+object.array = [{null_value = ''}, {boolean = 'true'}, {integer = '1'}, {alias = 'aliases are like variables'}, {alias = 'aliases are like variables'}]
+object.key = 'value'
+alias.bar = 'baz'

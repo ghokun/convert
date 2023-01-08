@@ -5,6 +5,7 @@ import static com.google.common.io.Files.getFileExtension;
 import static dev.gokhun.convert.FileUtil.FileType.mapperForFileType;
 import static java.util.Objects.requireNonNull;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -14,10 +15,12 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.common.collect.ImmutableSet;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.function.Supplier;
+import org.yaml.snakeyaml.Yaml;
 
 final class FileUtil {
 
@@ -53,7 +56,7 @@ final class FileUtil {
             Supplier<ObjectMapper> supplyMapper() {
                 return () ->
                         // TODO get these from command line
-                        new YAMLMapper()
+                        new YAMLMapperProxy()
                                 .configure(YAMLGenerator.Feature.INDENT_ARRAYS, true)
                                 .configure(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR, true)
                                 .configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true);
@@ -106,5 +109,15 @@ final class FileUtil {
                         ? outputMapper.writerWithDefaultPrettyPrinter()
                         : outputMapper.writer();
         writer.writeValue(output, data);
+    }
+
+    private static class YAMLMapperProxy extends YAMLMapper {
+
+        @Override
+        public JsonNode readTree(File file) throws IOException {
+            // Jackson YAML Mapper does not support anchors while reading into JsonNode
+            // https://github.com/FasterXML/jackson-dataformats-text/issues/120
+            return super.valueToTree(new Yaml().load(new FileInputStream(file)));
+        }
     }
 }

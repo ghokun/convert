@@ -1,0 +1,27 @@
+---
+json:
+  - rigid
+  - better for data interchange
+paragraph: |
+  Blank lines denote
+  paragraph breaks
+alias_reuse:
+  bar: baz
+yaml:
+  - slim and flexible
+  - better for configuration
+content: |-
+  Or we
+  can auto
+  convert line breaks
+  to save space
+object:
+  array:
+    - null_value: ""
+    - boolean: "true"
+    - integer: 1
+    - alias: aliases are like variables
+    - alias: aliases are like variables
+  key: value
+alias:
+  bar: baz

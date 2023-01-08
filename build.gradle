@@ -5,6 +5,7 @@ plugins {
     id "net.ltgt.errorprone" version "${errorPronePluginVersion}"
     id "org.graalvm.buildtools.native" version "${graalvmBuildtoolsVersion}"
     id "org.jreleaser" version "${jreleaserVersion}"
+    id "com.adarshr.test-logger" version "${testLoggerVersion}"
 }
 
 group = "dev.gokhun"

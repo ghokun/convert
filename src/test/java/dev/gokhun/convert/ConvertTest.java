@@ -77,12 +77,19 @@ Converts one file type to another.
 """);
     }
 
+    @SuppressWarnings("ClassCanBeStatic")
     @Nested
-    static final class ConversionTests {
+    final class ConversionTests {
         @TempDir File outputDirectory;
 
         @DisplayName("Should convert from input to output correctly")
-        @MethodSource("inputOutputProvider")
+        @MethodSource({
+            "fromJsonProvider",
+            "fromPropertiesProvider",
+            "fromTomlProvider",
+            "fromYamlProvider",
+            "minimalInputProvider"
+        })
         @ParameterizedTest
         void conversion1(String input, String output, String expected) {
             var outputPath = outputDirectory.getAbsolutePath() + output;
@@ -99,7 +106,7 @@ Converts one file type to another.
                     .hasSameTextualContentAs(new File(getTestResourcePath(expected)));
         }
 
-        private static Stream<Arguments> inputOutputProvider() {
+        private static Stream<Arguments> minimalInputProvider() {
             var inputs =
                     ImmutableSet.of(
                             "json/mini1.json",
@@ -110,13 +117,55 @@ Converts one file type to another.
                     .flatMap(input -> inputs.stream().map(output -> toArguments(input, output)));
         }
 
+        private static Stream<Arguments> fromJsonProvider() {
+            var outputs =
+                    ImmutableSet.of(
+                            "properties/fromjson.properties",
+                            "toml/fromjson.toml",
+                            "yaml/fromjson.yaml");
+
+            return outputs.stream().map(output -> toArguments("json/fromjson.json", output));
+        }
+
+        private static Stream<Arguments> fromPropertiesProvider() {
+            var outputs =
+                    ImmutableSet.of(
+                            "json/fromproperties.json",
+                            "toml/fromproperties.toml",
+                            "yaml/fromproperties.yaml");
+
+            return outputs.stream()
+                    .map(output -> toArguments("properties/fromproperties.properties", output));
+        }
+
+        private static Stream<Arguments> fromTomlProvider() {
+            var outputs =
+                    ImmutableSet.of(
+                            "json/fromtoml.json",
+                            "properties/fromtoml.properties",
+                            "yaml/fromtoml.yaml");
+
+            return outputs.stream().map(output -> toArguments("toml/fromtoml.toml", output));
+        }
+
+        private static Stream<Arguments> fromYamlProvider() {
+            var outputs =
+                    ImmutableSet.of(
+                            "json/fromyaml.json",
+                            "properties/fromyaml.properties",
+                            "toml/fromyaml.toml");
+
+            return outputs.stream().map(output -> toArguments("yaml/fromyaml.yaml", output));
+        }
+
         private static Arguments toArguments(String input, String output) {
             return arguments(input, "/actual." + getFileExtension(output), output);
         }
     }
 
+    @SuppressWarnings("ClassCanBeStatic")
     @Nested
-    static final class JsonTests {
+    final class JsonTests {
         @TempDir File outputDirectory;
 
         @DisplayName("Should prettify mini JSON")

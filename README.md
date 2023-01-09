@@ -11,7 +11,7 @@ This is a data file converter that will support following data file formats even
 ## Usage
 
 ```bash
-convert --from abc.csv --to abc.json
+convert --input abc.csv --output abc.json
 ```
 
 ## Purpose of another converter

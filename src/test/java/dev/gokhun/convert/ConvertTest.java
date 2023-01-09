@@ -65,15 +65,20 @@ final class ConvertTest {
                 .isEqualTo(
                         """
 Missing required options: '--input=<input>', '--output=<output>'
-Usage: convert [-hV] [--pretty] -i=<input> -o=<output> [-s=<separator>]
+Usage: convert [-hV] [--indent-yaml] [--minimize-yaml-quotes] [--pretty] -f=<input> -o=<output> [-s=<csvSeparator>]
 Converts one file type to another.
-  -h, --help              Show this help message and exit.
-  -V, --version           Print version information and exit.
-  -i, --input=<input>     File to convert from.
-  -o, --output=<output>   File to convert into.
-  -s, --separator=<separator>
-                          Character(s) to separate CSV columns. Default value is ','.
-      --pretty            Prettify output if possible. Default is false and output is minimized.
+  -h, --help          Show this help message and exit.
+  -V, --version       Print version information and exit.
+  -f, -i, --from, --input=<input>
+                      File to convert from.
+  -o, -t, --to, --output=<output>
+                      File to convert into.
+  -s, --csv-separator=<csvSeparator>
+                      Character(s) to separate CSV columns. Default value is ','.
+      --pretty        Prettify output if possible. Default is false and output is minimized.
+      --indent-yaml   Indents YAML array fields. Default is true.
+      --minimize-yaml-quotes
+                      Minimizes YAML quotes if possible. Default is true.
 """);
     }
 
@@ -101,6 +106,8 @@ Converts one file type to another.
                             .setExecutionExceptionHandler(exceptionHandler)
                             .execute("-i", getTestResourcePath(input), "-o", outputPath));
 
+            assertThat(systemManager.getOutput()).isEmpty();
+            assertThat(systemManager.getError()).isEmpty();
             assertThat(systemManager.getExitStatus()).isEqualTo(OK);
             assertThat(new File(outputPath))
                     .hasSameTextualContentAs(new File(getTestResourcePath(expected)));
@@ -110,6 +117,7 @@ Converts one file type to another.
             var inputs =
                     ImmutableSet.of(
                             "json/mini1.json",
+                            "csv/mini1.csv",
                             "properties/mini1.properties",
                             "toml/mini1.toml",
                             "yaml/mini1.yaml");

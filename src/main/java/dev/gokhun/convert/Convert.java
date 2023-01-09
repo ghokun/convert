@@ -1,12 +1,12 @@
 package dev.gokhun.convert;
 
-import static dev.gokhun.convert.FileUtil.convert;
+import static dev.gokhun.convert.ConversionUtil.convert;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static picocli.CommandLine.ExitCode.OK;
 import static picocli.CommandLine.Help.Ansi.ON;
 import static picocli.CommandLine.Help.defaultColorScheme;
 
-import dev.gokhun.convert.FileUtil.ConversionOptions;
+import dev.gokhun.convert.ConversionUtil.ConversionOptions;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +18,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Help.ColorScheme;
 import picocli.CommandLine.IExecutionExceptionHandler;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.ParseResult;
 
 @Command(
         mixinStandardHelpOptions = true,
@@ -39,25 +40,25 @@ public final class Convert implements Callable<Integer> {
                     .setColorScheme(colorScheme);
 
     @Option(
-            names = {"--input", "-i"},
+            names = {"--from", "--input", "-f", "-i"},
             required = true,
             order = 1,
             description = "File to convert from.")
     File input;
 
     @Option(
-            names = {"--output", "-o"},
+            names = {"--output", "--to", "-o", "-t"},
             required = true,
             order = 2,
             description = "File to convert into.")
     File output;
 
     @Option(
-            names = {"--separator", "-s"},
+            names = {"--csv-separator", "-s"},
             order = 3,
             defaultValue = ",",
             description = "Character(s) to separate CSV columns. Default value is ','.")
-    String separator;
+    char csvSeparator;
 
     @Option(
             names = "--pretty",
@@ -66,10 +67,32 @@ public final class Convert implements Callable<Integer> {
             description = "Prettify output if possible. Default is false and output is minimized.")
     boolean pretty;
 
+    @Option(
+            names = "--indent-yaml",
+            order = 5,
+            defaultValue = "true",
+            description = "Indents YAML array fields. Default is true.")
+    boolean indentYaml;
+
+    @Option(
+            names = "--minimize-yaml-quotes",
+            order = 6,
+            defaultValue = "true",
+            description = "Minimizes YAML quotes if possible. Default is true.")
+    boolean minimizeYamlQuotes;
+
     @Override
     public Integer call() {
         try {
-            convert(input, output, new ConversionOptions(separator, pretty));
+            convert(
+                    input,
+                    output,
+                    ConversionOptions.builder()
+                            .setCsvSeparator(csvSeparator)
+                            .setPretty(pretty)
+                            .setIndentYaml(indentYaml)
+                            .setMinimizeYamlQuotes(minimizeYamlQuotes)
+                            .build());
         } catch (IllegalArgumentException | IOException e) {
             throw new ConvertAppException(e);
         }
@@ -115,7 +138,7 @@ public final class Convert implements Callable<Integer> {
 
         @Override
         public int handleExecutionException(
-                Exception ex, CommandLine commandLine, CommandLine.ParseResult parseResult) {
+                Exception ex, CommandLine commandLine, ParseResult parseResult) {
             commandLine.getErr().println(commandLine.getColorScheme().errorText(ex.getMessage()));
             return commandLine.getExitCodeExceptionMapper() != null
                     ? commandLine.getExitCodeExceptionMapper().getExitCode(ex)

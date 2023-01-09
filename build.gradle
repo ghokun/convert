@@ -67,7 +67,7 @@ final class VersionProvider implements picocli.CommandLine.IVersionProvider {
 
 sourceSets.main.java.srcDirs += generatedSources
 
-compileJava {
+tasks.withType(JavaCompile).configureEach {
     dependsOn("generateVersionProvider")
     options.compilerArgs += [
         "-Aproject=${project.group}/${project.name}",

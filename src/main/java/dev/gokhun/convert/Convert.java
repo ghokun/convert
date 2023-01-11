@@ -81,6 +81,15 @@ public final class Convert implements Callable<Integer> {
             description = "Minimizes YAML quotes if possible. Default is true.")
     boolean minimizeYamlQuotes;
 
+    @Option(
+            names = "--deduplicate-keys",
+            order = 7,
+            defaultValue = "false",
+            description =
+                    "Think csv but as json. Only available on conversions where the initial source"
+                            + " is array. Keys are arrays and values are arrays of arrays.")
+    boolean deduplicateKeys;
+
     @Override
     public Integer call() {
         try {
@@ -92,6 +101,7 @@ public final class Convert implements Callable<Integer> {
                             .setPretty(pretty)
                             .setIndentYaml(indentYaml)
                             .setMinimizeYamlQuotes(minimizeYamlQuotes)
+                            .setDeduplicateKeys(deduplicateKeys)
                             .build());
         } catch (IllegalArgumentException | IOException e) {
             throw new ConvertAppException(e);

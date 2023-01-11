@@ -65,20 +65,23 @@ final class ConvertTest {
                 .isEqualTo(
                         """
 Missing required options: '--input=<input>', '--output=<output>'
-Usage: convert [-hV] [--indent-yaml] [--minimize-yaml-quotes] [--pretty] -f=<input> -o=<output> [-s=<csvSeparator>]
+Usage: convert [-hV] [--deduplicate-keys] [--indent-yaml] [--minimize-yaml-quotes] [--pretty] -f=<input> -o=<output>
+               [-s=<csvSeparator>]
 Converts one file type to another.
-  -h, --help          Show this help message and exit.
-  -V, --version       Print version information and exit.
+  -h, --help               Show this help message and exit.
+  -V, --version            Print version information and exit.
   -f, -i, --from, --input=<input>
-                      File to convert from.
+                           File to convert from.
   -o, -t, --to, --output=<output>
-                      File to convert into.
+                           File to convert into.
   -s, --csv-separator=<csvSeparator>
-                      Character(s) to separate CSV columns. Default value is ','.
-      --pretty        Prettify output if possible. Default is false and output is minimized.
-      --indent-yaml   Indents YAML array fields. Default is true.
+                           Character(s) to separate CSV columns. Default value is ','.
+      --pretty             Prettify output if possible. Default is false and output is minimized.
+      --indent-yaml        Indents YAML array fields. Default is true.
       --minimize-yaml-quotes
-                      Minimizes YAML quotes if possible. Default is true.
+                           Minimizes YAML quotes if possible. Default is true.
+      --deduplicate-keys   Think csv but as json. Only available on conversions where the initial source is array. Keys
+                             are arrays and values are arrays of arrays.
 """);
     }
 

@@ -16,6 +16,7 @@ import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.fasterxml.jackson.dataformat.toml.TomlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.io.FileInputStream;
@@ -159,7 +160,11 @@ final class ConversionUtil {
     }
 
     record ConversionOptions(
-            char csvSeparator, boolean pretty, boolean indentYaml, boolean minimizeYamlQuotes) {
+            char csvSeparator,
+            boolean pretty,
+            boolean indentYaml,
+            boolean minimizeYamlQuotes,
+            boolean deduplicateKeys) {
         ConversionOptions {
             checkArgument(
                     !isWhitespace(csvSeparator) && !isSpaceChar(csvSeparator),
@@ -175,6 +180,7 @@ final class ConversionUtil {
             private boolean pretty;
             private boolean indentYaml;
             private boolean minimizeYamlQuotes;
+            private boolean deduplicateKeys;
 
             private Builder() {}
 
@@ -198,12 +204,23 @@ final class ConversionUtil {
                 return this;
             }
 
+            Builder setDeduplicateKeys(boolean deduplicateKeys) {
+                this.deduplicateKeys = deduplicateKeys;
+                return this;
+            }
+
             ConversionOptions build() {
                 return new ConversionOptions(
-                        this.csvSeparator, this.pretty, this.indentYaml, this.minimizeYamlQuotes);
+                        this.csvSeparator,
+                        this.pretty,
+                        this.indentYaml,
+                        this.minimizeYamlQuotes,
+                        this.deduplicateKeys);
             }
         }
     }
+
+    record Deduplicated(ImmutableList<String> keys, ImmutableList<ImmutableList<Object>> values) {}
 
     // TODO Just a dummy implementation for now. Consider using java.nio.
     static void convert(File input, File output, ConversionOptions options) throws IOException {

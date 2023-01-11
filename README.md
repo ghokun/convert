@@ -70,8 +70,8 @@ sdk env
 ## TODO list
 
 - [x] Basic setup (project structure, formatting, static analysis, testing)
-- [ ] Implement all possible file conversions
-  - [ ] CSV needs special implementation, others are trivial
+- [x] Implement all possible file conversions
+  - [x] CSV needs special implementation, others are trivial
 - [ ] GraalVM setup
   - [x] Native compilation
   - [x] Generate/Analyze/Validate reflection configs

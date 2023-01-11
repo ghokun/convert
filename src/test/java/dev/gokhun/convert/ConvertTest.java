@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -168,10 +169,6 @@ Converts one file type to another.
 
             return outputs.stream().map(output -> toArguments("yaml/fromyaml.yaml", output));
         }
-
-        private static Arguments toArguments(String input, String output) {
-            return arguments(input, "/actual." + getFileExtension(output), output);
-        }
     }
 
     @SuppressWarnings("ClassCanBeStatic")
@@ -218,6 +215,51 @@ Converts one file type to another.
         }
     }
 
+    @SuppressWarnings("ClassCanBeStatic")
+    @Nested
+    final class DeduplicationTests {
+        @TempDir File outputDirectory;
+
+        @Disabled("TODO there is a problem with csv mapping without schema")
+        @DisplayName("Should deduplicate correctly")
+        @MethodSource("deduplicateProvider")
+        @ParameterizedTest
+        void deduplicate1(String input, String output, String expected) {
+            var outputPath = outputDirectory.getAbsolutePath() + output;
+            var systemManager = new MockSystemManager();
+            systemManager.exit(
+                    new CommandLine(new Convert())
+                            .setOut(systemManager.getOut())
+                            .setErr(systemManager.getErr())
+                            .setExecutionExceptionHandler(exceptionHandler)
+                            .execute(
+                                    "-i",
+                                    getTestResourcePath(input),
+                                    "-o",
+                                    outputPath,
+                                    "--pretty",
+                                    "--deduplicate-keys"));
+
+            assertThat(systemManager.getOutput()).isEmpty();
+            assertThat(systemManager.getError()).isEmpty();
+            assertThat(systemManager.getExitStatus()).isEqualTo(OK);
+            assertThat(new File(outputPath))
+                    .hasSameTextualContentAs(new File(getTestResourcePath(expected)));
+        }
+
+        private static Stream<Arguments> deduplicateProvider() {
+            var inputs =
+                    ImmutableSet.of(
+                            "csv/deduplicatefrom.csv",
+                            "json/deduplicatefrom.json",
+                            "properties/deduplicatefrom.properties",
+                            "toml/deduplicatefrom.toml",
+                            "yaml/deduplicatefrom.yaml");
+
+            return inputs.stream().map(input -> toArguments(input, "json/deduplicateto.json"));
+        }
+    }
+
     static final class MockSystemManager implements SystemManager {
         private final ByteArrayOutputStream out = new ByteArrayOutputStream();
         private final ByteArrayOutputStream err = new ByteArrayOutputStream();
@@ -253,5 +295,9 @@ Converts one file type to another.
 
     private static String getTestResourcePath(String file) {
         return "src/test/resources/" + file;
+    }
+
+    private static Arguments toArguments(String input, String output) {
+        return arguments(input, "/actual." + getFileExtension(output), output);
     }
 }

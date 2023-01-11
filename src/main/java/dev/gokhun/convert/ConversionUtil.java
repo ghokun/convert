@@ -10,6 +10,8 @@ import static java.util.Objects.requireNonNull;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
@@ -23,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
 
 final class ConversionUtil {
@@ -220,7 +223,32 @@ final class ConversionUtil {
         }
     }
 
-    record Deduplicated(ImmutableList<String> keys, ImmutableList<ImmutableList<Object>> values) {}
+    static JsonNode deduplicateKeys(JsonNode original) {
+        if (original.isArray()) {
+            var factory = JsonNodeFactory.instance;
+            var deduplicated = factory.objectNode();
+
+            var it = original.elements();
+            var keys = deduplicated.putArray("keys");
+            var values = deduplicated.putArray("values");
+            while (it.hasNext()) {
+                var next = it.next();
+                if (keys.size() == 0) {
+                    keys.addAll(
+                            ImmutableList.copyOf(next.fieldNames()).stream()
+                                    .map(TextNode::valueOf)
+                                    .toList());
+                }
+                values.addPOJO(
+                        ImmutableList.copyOf(next.fields()).stream()
+                                .map(Map.Entry::getValue)
+                                .toList());
+            }
+            return deduplicated;
+        }
+
+        return original;
+    }
 
     // TODO Just a dummy implementation for now. Consider using java.nio.
     static void convert(File input, File output, ConversionOptions options) throws IOException {
@@ -231,6 +259,6 @@ final class ConversionUtil {
         var writer = fromFileExtension(getFileExtension(output.getName())).writer(options);
 
         var data = reader.read(input);
-        writer.write(output, data);
+        writer.write(output, options.deduplicateKeys() ? deduplicateKeys(data) : data);
     }
 }

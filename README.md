@@ -1,17 +1,59 @@
 # Convert
 
-This is a data file converter that will support following data file formats eventually:
+This is a data file converter that supports following files:
 
-- [ ] [CSV](https://www.rfc-editor.org/rfc/rfc4180)
-- [ ] [JSON](https://www.rfc-editor.org/rfc/rfc8259)
-- [ ] [YAML](https://yaml.org/spec/history/2001-05-26.html)
-- [ ] [TOML](https://toml.io/en/)
-- [ ] [properties](https://en.wikipedia.org/wiki/.properties)
+- [CSV](https://www.rfc-editor.org/rfc/rfc4180)
+- [JSON](https://www.rfc-editor.org/rfc/rfc8259)
+- [YAML](https://yaml.org/spec/history/2001-05-26.html)
+- [TOML](https://toml.io/en/)
+- [properties](https://en.wikipedia.org/wiki/.properties)
 
 ## Usage
 
 ```bash
+# Simple conversions
 convert --input abc.csv --output abc.json
+convert --input abc.yaml --output abc.properties
+convert --input abc.toml --output abc.csv
+
+# Prettify json
+convert --input abc.json --output pretty-abc.json --pretty
+
+# Minify json
+convert --input pretty-abc.json --output abc.json
+
+# Indent yaml
+#
+# abc:       abc:
+# - item1 ->   - item1
+# - item2      - item2
+#
+convert --input abc.yaml --output indented-abc.yaml --indent-yaml
+
+# Minimize yaml quotes
+#
+# abc: "Hello world!" -> abc: Hello world!
+convert --input abc.yaml --output abc-without-quotes.yaml --minimize-yaml-quotes
+
+# Deduplicate keys
+# This:
+# [
+#   {
+#     "key1": "value1",
+#     "key2": "value2"
+#   },
+#   {
+#     "key1": "value3",
+#     "key2": "value4"
+#   }
+# ]
+#
+# Becomes this:
+# {
+#   "keys" : [ "key1", "key2" ],
+#   "values" : [ [ "value1", "value2" ], [ "value3", "value4" ] ]
+# }
+convert --input abc.json --output dedup-abc.json --deduplicate-keys
 ```
 
 ## Purpose of another converter

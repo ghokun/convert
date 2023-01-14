@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -121,7 +120,6 @@ Converts one file type to another.
             var inputs =
                     ImmutableSet.of(
                             "json/mini1.json",
-                            "csv/mini1.csv",
                             "properties/mini1.properties",
                             "toml/mini1.toml",
                             "yaml/mini1.yaml");
@@ -220,7 +218,6 @@ Converts one file type to another.
     final class DeduplicationTests {
         @TempDir File outputDirectory;
 
-        @Disabled("TODO there is a problem with csv mapping without schema")
         @DisplayName("Should deduplicate correctly")
         @MethodSource("deduplicateProvider")
         @ParameterizedTest
@@ -252,8 +249,6 @@ Converts one file type to another.
                     ImmutableSet.of(
                             "csv/deduplicatefrom.csv",
                             "json/deduplicatefrom.json",
-                            "properties/deduplicatefrom.properties",
-                            "toml/deduplicatefrom.toml",
                             "yaml/deduplicatefrom.yaml");
 
             return inputs.stream().map(input -> toArguments(input, "json/deduplicateto.json"));

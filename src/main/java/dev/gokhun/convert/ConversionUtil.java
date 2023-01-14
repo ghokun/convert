@@ -7,7 +7,9 @@ import static java.lang.Character.isSpaceChar;
 import static java.lang.Character.isWhitespace;
 import static java.util.Objects.requireNonNull;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -24,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
@@ -42,16 +45,22 @@ final class ConversionUtil {
     enum FileType {
         CSV(ImmutableSet.of("csv")) {
             private static final CsvMapper mapper = new CsvMapper();
+            private static final CsvSchema schema = CsvSchema.emptySchema().withHeader();
 
             @Override
             Reader reader(ConversionOptions options) {
-                return file ->
-                        mapper.readerFor(JsonNode.class)
-                                .with(
-                                        CsvSchema.emptySchema()
-                                                .withColumnSeparator(options.csvSeparator())
-                                                .withHeader())
-                                .readValue(file);
+                return file -> {
+                    var it =
+                            mapper.readerFor(new TypeReference<LinkedHashMap<String, String>>() {})
+                                    .with(schema.withColumnSeparator(options.csvSeparator()))
+                                    .readValues(file);
+                    var factory = JsonNodeFactory.instance;
+                    var result = factory.arrayNode();
+                    while (it.hasNextValue()) {
+                        result.add(mapper.convertValue(it.next(), JsonNode.class));
+                    }
+                    return result;
+                };
             }
 
             @Override
@@ -89,7 +98,10 @@ final class ConversionUtil {
             }
         },
         PROPERTIES(ImmutableSet.of("properties")) {
-            private static final JavaPropsMapper mapper = new JavaPropsMapper();
+            private static final JavaPropsMapper mapper =
+                    JavaPropsMapper.builder()
+                            .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
+                            .build();
 
             @Override
             Reader reader(ConversionOptions options) {

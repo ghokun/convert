@@ -7,6 +7,8 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static picocli.CommandLine.ExitCode.OK;
 import static picocli.CommandLine.ExitCode.USAGE;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import dev.gokhun.convert.Convert.ExecutionExceptionHandler;
 import dev.gokhun.convert.Convert.SystemManager;
@@ -252,6 +254,51 @@ Converts one file type to another.
                             "yaml/deduplicatefrom.yaml");
 
             return inputs.stream().map(input -> toArguments(input, "json/deduplicateto.json"));
+        }
+    }
+
+    @SuppressWarnings("ClassCanBeStatic")
+    @Nested
+    final class CsvTests {
+        @TempDir File outputDirectory;
+
+        @DisplayName("Should convert csv correctly")
+        @MethodSource("csvProvider")
+        @ParameterizedTest
+        void csv1(String input, String output, String expected, boolean dedup) {
+            var outputPath = outputDirectory.getAbsolutePath() + output;
+            var systemManager = new MockSystemManager();
+            var args =
+                    ImmutableList.<String>builder()
+                            .add("-i", getTestResourcePath(input), "-o", outputPath, "--pretty");
+            if (dedup) {
+                args.add("--deduplicate-keys");
+            }
+            systemManager.exit(
+                    new CommandLine(new Convert())
+                            .setOut(systemManager.getOut())
+                            .setErr(systemManager.getErr())
+                            .setExecutionExceptionHandler(exceptionHandler)
+                            .execute(args.build().toArray(String[]::new)));
+
+            assertThat(systemManager.getOutput()).isEmpty();
+            assertThat(systemManager.getError()).isEmpty();
+            assertThat(systemManager.getExitStatus()).isEqualTo(OK);
+            assertThat(new File(outputPath))
+                    .hasSameTextualContentAs(new File(getTestResourcePath(expected)));
+        }
+
+        private static Stream<Arguments> csvProvider() {
+            return ImmutableMap.of("json/oscars.json", false, "json/oscars-dedup.json", true)
+                    .entrySet()
+                    .stream()
+                    .map(
+                            output ->
+                                    arguments(
+                                            "csv/oscars.csv",
+                                            "/actual." + getFileExtension(output.getKey()),
+                                            output.getKey(),
+                                            output.getValue()));
         }
     }
 

@@ -1,0 +1,535 @@
+[ {
+  "Index" : "1",
+  "Year" : "1928",
+  "Age" : "44",
+  "Name" : "Emil Jannings",
+  "Movie" : "The Last Command, The Way of All Flesh"
+}, {
+  "Index" : "2",
+  "Year" : "1929",
+  "Age" : "41",
+  "Name" : "Warner Baxter",
+  "Movie" : "In Old Arizona"
+}, {
+  "Index" : "3",
+  "Year" : "1930",
+  "Age" : "62",
+  "Name" : "George Arliss",
+  "Movie" : "Disraeli"
+}, {
+  "Index" : "4",
+  "Year" : "1931",
+  "Age" : "53",
+  "Name" : "Lionel Barrymore",
+  "Movie" : "A Free Soul"
+}, {
+  "Index" : "5",
+  "Year" : "1932",
+  "Age" : "47",
+  "Name" : "Wallace Beery",
+  "Movie" : "The Champ"
+}, {
+  "Index" : "6",
+  "Year" : "1933",
+  "Age" : "35",
+  "Name" : "Fredric March",
+  "Movie" : "Dr. Jekyll and Mr. Hyde"
+}, {
+  "Index" : "7",
+  "Year" : "1934",
+  "Age" : "34",
+  "Name" : "Charles Laughton",
+  "Movie" : "The Private Life of Henry VIII"
+}, {
+  "Index" : "8",
+  "Year" : "1935",
+  "Age" : "34",
+  "Name" : "Clark Gable",
+  "Movie" : "It Happened One Night"
+}, {
+  "Index" : "9",
+  "Year" : "1936",
+  "Age" : "49",
+  "Name" : "Victor McLaglen",
+  "Movie" : "The Informer"
+}, {
+  "Index" : "10",
+  "Year" : "1937",
+  "Age" : "41",
+  "Name" : "Paul Muni",
+  "Movie" : "The Story of Louis Pasteur"
+}, {
+  "Index" : "11",
+  "Year" : "1938",
+  "Age" : "37",
+  "Name" : "Spencer Tracy",
+  "Movie" : "Captains Courageous"
+}, {
+  "Index" : "12",
+  "Year" : "1939",
+  "Age" : "38",
+  "Name" : "Spencer Tracy",
+  "Movie" : "Boys Town"
+}, {
+  "Index" : "13",
+  "Year" : "1940",
+  "Age" : "34",
+  "Name" : "Robert Donat",
+  "Movie" : "Goodbye, Mr. Chips"
+}, {
+  "Index" : "14",
+  "Year" : "1941",
+  "Age" : "32",
+  "Name" : "James Stewart",
+  "Movie" : "The Philadelphia Story"
+}, {
+  "Index" : "15",
+  "Year" : "1942",
+  "Age" : "40",
+  "Name" : "Gary Cooper",
+  "Movie" : "Sergeant York"
+}, {
+  "Index" : "16",
+  "Year" : "1943",
+  "Age" : "43",
+  "Name" : "James Cagney",
+  "Movie" : "Yankee Doodle Dandy"
+}, {
+  "Index" : "17",
+  "Year" : "1944",
+  "Age" : "48",
+  "Name" : "Paul Lukas",
+  "Movie" : "Watch on the Rhine"
+}, {
+  "Index" : "18",
+  "Year" : "1945",
+  "Age" : "41",
+  "Name" : "Bing Crosby",
+  "Movie" : "Going My Way"
+}, {
+  "Index" : "19",
+  "Year" : "1946",
+  "Age" : "39",
+  "Name" : "Ray Milland",
+  "Movie" : "The Lost Weekend"
+}, {
+  "Index" : "20",
+  "Year" : "1947",
+  "Age" : "49",
+  "Name" : "Fredric March",
+  "Movie" : "The Best Years of Our Lives"
+}, {
+  "Index" : "21",
+  "Year" : "1948",
+  "Age" : "57",
+  "Name" : "Ronald Colman",
+  "Movie" : "A Double Life"
+}, {
+  "Index" : "22",
+  "Year" : "1949",
+  "Age" : "41",
+  "Name" : "Laurence Olivier",
+  "Movie" : "Hamlet"
+}, {
+  "Index" : "23",
+  "Year" : "1950",
+  "Age" : "38",
+  "Name" : "Broderick Crawford",
+  "Movie" : "All the King's Men"
+}, {
+  "Index" : "24",
+  "Year" : "1951",
+  "Age" : "39",
+  "Name" : "JosÃ© Ferrer",
+  "Movie" : "Cyrano de Bergerac"
+}, {
+  "Index" : "25",
+  "Year" : "1952",
+  "Age" : "52",
+  "Name" : "Humphrey Bogart",
+  "Movie" : "The African Queen"
+}, {
+  "Index" : "26",
+  "Year" : "1953",
+  "Age" : "51",
+  "Name" : "Gary Cooper",
+  "Movie" : "High Noon"
+}, {
+  "Index" : "27",
+  "Year" : "1954",
+  "Age" : "35",
+  "Name" : "William Holden",
+  "Movie" : "Stalag 17"
+}, {
+  "Index" : "28",
+  "Year" : "1955",
+  "Age" : "30",
+  "Name" : "Marlon Brando",
+  "Movie" : "On the Waterfront"
+}, {
+  "Index" : "29",
+  "Year" : "1956",
+  "Age" : "39",
+  "Name" : "Ernest Borgnine",
+  "Movie" : "Marty"
+}, {
+  "Index" : "30",
+  "Year" : "1957",
+  "Age" : "36",
+  "Name" : "Yul Brynner",
+  "Movie" : "The King and I"
+}, {
+  "Index" : "31",
+  "Year" : "1958",
+  "Age" : "43",
+  "Name" : "Alec Guinness",
+  "Movie" : "The Bridge on the River Kwai"
+}, {
+  "Index" : "32",
+  "Year" : "1959",
+  "Age" : "49",
+  "Name" : "David Niven",
+  "Movie" : "Separate Tables"
+}, {
+  "Index" : "33",
+  "Year" : "1960",
+  "Age" : "36",
+  "Name" : "Charlton Heston",
+  "Movie" : "Ben-Hur"
+}, {
+  "Index" : "34",
+  "Year" : "1961",
+  "Age" : "47",
+  "Name" : "Burt Lancaster",
+  "Movie" : "Elmer Gantry"
+}, {
+  "Index" : "35",
+  "Year" : "1962",
+  "Age" : "31",
+  "Name" : "Maximilian Schell",
+  "Movie" : "Judgment at Nuremberg"
+}, {
+  "Index" : "36",
+  "Year" : "1963",
+  "Age" : "47",
+  "Name" : "Gregory Peck",
+  "Movie" : "To Kill a Mockingbird"
+}, {
+  "Index" : "37",
+  "Year" : "1964",
+  "Age" : "37",
+  "Name" : "Sidney Poitier",
+  "Movie" : "Lilies of the Field"
+}, {
+  "Index" : "38",
+  "Year" : "1965",
+  "Age" : "57",
+  "Name" : "Rex Harrison",
+  "Movie" : "My Fair Lady"
+}, {
+  "Index" : "39",
+  "Year" : "1966",
+  "Age" : "42",
+  "Name" : "Lee Marvin",
+  "Movie" : "Cat Ballou"
+}, {
+  "Index" : "40",
+  "Year" : "1967",
+  "Age" : "45",
+  "Name" : "Paul Scofield",
+  "Movie" : "A Man for All Seasons"
+}, {
+  "Index" : "41",
+  "Year" : "1968",
+  "Age" : "42",
+  "Name" : "Rod Steiger",
+  "Movie" : "In the Heat of the Night"
+}, {
+  "Index" : "42",
+  "Year" : "1969",
+  "Age" : "45",
+  "Name" : "Cliff Robertson",
+  "Movie" : "Charly"
+}, {
+  "Index" : "43",
+  "Year" : "1970",
+  "Age" : "62",
+  "Name" : "John Wayne",
+  "Movie" : "True Grit"
+}, {
+  "Index" : "44",
+  "Year" : "1971",
+  "Age" : "43",
+  "Name" : "George C. Scott",
+  "Movie" : "Patton"
+}, {
+  "Index" : "45",
+  "Year" : "1972",
+  "Age" : "42",
+  "Name" : "Gene Hackman",
+  "Movie" : "The French Connection"
+}, {
+  "Index" : "46",
+  "Year" : "1973",
+  "Age" : "48",
+  "Name" : "Marlon Brando",
+  "Movie" : "The Godfather"
+}, {
+  "Index" : "47",
+  "Year" : "1974",
+  "Age" : "49",
+  "Name" : "Jack Lemmon",
+  "Movie" : "Save the Tiger"
+}, {
+  "Index" : "48",
+  "Year" : "1975",
+  "Age" : "56",
+  "Name" : "Art Carney",
+  "Movie" : "Harry and Tonto"
+}, {
+  "Index" : "49",
+  "Year" : "1976",
+  "Age" : "38",
+  "Name" : "Jack Nicholson",
+  "Movie" : "One Flew Over the Cuckoo's Nest"
+}, {
+  "Index" : "50",
+  "Year" : "1977",
+  "Age" : "60",
+  "Name" : "Peter Finch",
+  "Movie" : "Network"
+}, {
+  "Index" : "51",
+  "Year" : "1978",
+  "Age" : "30",
+  "Name" : "Richard Dreyfuss",
+  "Movie" : "The Goodbye Girl"
+}, {
+  "Index" : "52",
+  "Year" : "1979",
+  "Age" : "40",
+  "Name" : "Jon Voight",
+  "Movie" : "Coming Home"
+}, {
+  "Index" : "53",
+  "Year" : "1980",
+  "Age" : "42",
+  "Name" : "Dustin Hoffman",
+  "Movie" : "Kramer vs. Kramer"
+}, {
+  "Index" : "54",
+  "Year" : "1981",
+  "Age" : "37",
+  "Name" : "Robert De Niro",
+  "Movie" : "Raging Bull"
+}, {
+  "Index" : "55",
+  "Year" : "1982",
+  "Age" : "76",
+  "Name" : "Henry Fonda",
+  "Movie" : "On Golden Pond"
+}, {
+  "Index" : "56",
+  "Year" : "1983",
+  "Age" : "39",
+  "Name" : "Ben Kingsley",
+  "Movie" : "Gandhi"
+}, {
+  "Index" : "57",
+  "Year" : "1984",
+  "Age" : "53",
+  "Name" : "Robert Duvall",
+  "Movie" : "Tender Mercies"
+}, {
+  "Index" : "58",
+  "Year" : "1985",
+  "Age" : "45",
+  "Name" : "F. Murray Abraham",
+  "Movie" : "Amadeus"
+}, {
+  "Index" : "59",
+  "Year" : "1986",
+  "Age" : "36",
+  "Name" : "William Hurt",
+  "Movie" : "Kiss of the Spider Woman"
+}, {
+  "Index" : "60",
+  "Year" : "1987",
+  "Age" : "62",
+  "Name" : "Paul Newman",
+  "Movie" : "The Color of Money"
+}, {
+  "Index" : "61",
+  "Year" : "1988",
+  "Age" : "43",
+  "Name" : "Michael Douglas",
+  "Movie" : "Wall Street"
+}, {
+  "Index" : "62",
+  "Year" : "1989",
+  "Age" : "51",
+  "Name" : "Dustin Hoffman",
+  "Movie" : "Rain Man"
+}, {
+  "Index" : "63",
+  "Year" : "1990",
+  "Age" : "32",
+  "Name" : "Daniel Day-Lewis",
+  "Movie" : "My Left Foot"
+}, {
+  "Index" : "64",
+  "Year" : "1991",
+  "Age" : "42",
+  "Name" : "Jeremy Irons",
+  "Movie" : "Reversal of Fortune"
+}, {
+  "Index" : "65",
+  "Year" : "1992",
+  "Age" : "54",
+  "Name" : "Anthony Hopkins",
+  "Movie" : "The Silence of the Lambs"
+}, {
+  "Index" : "66",
+  "Year" : "1993",
+  "Age" : "52",
+  "Name" : "Al Pacino",
+  "Movie" : "Scent of a Woman"
+}, {
+  "Index" : "67",
+  "Year" : "1994",
+  "Age" : "37",
+  "Name" : "Tom Hanks",
+  "Movie" : "Philadelphia"
+}, {
+  "Index" : "68",
+  "Year" : "1995",
+  "Age" : "38",
+  "Name" : "Tom Hanks",
+  "Movie" : "Forrest Gump"
+}, {
+  "Index" : "69",
+  "Year" : "1996",
+  "Age" : "32",
+  "Name" : "Nicolas Cage",
+  "Movie" : "Leaving Las Vegas"
+}, {
+  "Index" : "70",
+  "Year" : "1997",
+  "Age" : "45",
+  "Name" : "Geoffrey Rush",
+  "Movie" : "Shine"
+}, {
+  "Index" : "71",
+  "Year" : "1998",
+  "Age" : "60",
+  "Name" : "Jack Nicholson",
+  "Movie" : "As Good as It Gets"
+}, {
+  "Index" : "72",
+  "Year" : "1999",
+  "Age" : "46",
+  "Name" : "Roberto Benigni",
+  "Movie" : "Life Is Beautiful"
+}, {
+  "Index" : "73",
+  "Year" : "2000",
+  "Age" : "40",
+  "Name" : "Kevin Spacey",
+  "Movie" : "American Beauty"
+}, {
+  "Index" : "74",
+  "Year" : "2001",
+  "Age" : "36",
+  "Name" : "Russell Crowe",
+  "Movie" : "Gladiator"
+}, {
+  "Index" : "75",
+  "Year" : "2002",
+  "Age" : "47",
+  "Name" : "Denzel Washington",
+  "Movie" : "Training Day"
+}, {
+  "Index" : "76",
+  "Year" : "2003",
+  "Age" : "29",
+  "Name" : "Adrien Brody",
+  "Movie" : "The Pianist"
+}, {
+  "Index" : "77",
+  "Year" : "2004",
+  "Age" : "43",
+  "Name" : "Sean Penn",
+  "Movie" : "Mystic River"
+}, {
+  "Index" : "78",
+  "Year" : "2005",
+  "Age" : "37",
+  "Name" : "Jamie Foxx",
+  "Movie" : "Ray"
+}, {
+  "Index" : "79",
+  "Year" : "2006",
+  "Age" : "38",
+  "Name" : "Philip Seymour Hoffman",
+  "Movie" : "Capote"
+}, {
+  "Index" : "80",
+  "Year" : "2007",
+  "Age" : "45",
+  "Name" : "Forest Whitaker",
+  "Movie" : "The Last King of Scotland"
+}, {
+  "Index" : "81",
+  "Year" : "2008",
+  "Age" : "50",
+  "Name" : "Daniel Day-Lewis",
+  "Movie" : "There Will Be Blood"
+}, {
+  "Index" : "82",
+  "Year" : "2009",
+  "Age" : "48",
+  "Name" : "Sean Penn",
+  "Movie" : "Milk"
+}, {
+  "Index" : "83",
+  "Year" : "2010",
+  "Age" : "60",
+  "Name" : "Jeff Bridges",
+  "Movie" : "Crazy Heart"
+}, {
+  "Index" : "84",
+  "Year" : "2011",
+  "Age" : "50",
+  "Name" : "Colin Firth",
+  "Movie" : "The King's Speech"
+}, {
+  "Index" : "85",
+  "Year" : "2012",
+  "Age" : "39",
+  "Name" : "Jean Dujardin",
+  "Movie" : "The Artist"
+}, {
+  "Index" : "86",
+  "Year" : "2013",
+  "Age" : "55",
+  "Name" : "Daniel Day-Lewis",
+  "Movie" : "Lincoln"
+}, {
+  "Index" : "87",
+  "Year" : "2014",
+  "Age" : "44",
+  "Name" : "Matthew McConaughey",
+  "Movie" : "Dallas Buyers Club"
+}, {
+  "Index" : "88",
+  "Year" : "2015",
+  "Age" : "33",
+  "Name" : "Eddie Redmayne",
+  "Movie" : "The Theory of Everything"
+}, {
+  "Index" : "89",
+  "Year" : "2016",
+  "Age" : "41",
+  "Name" : "Leonardo DiCaprio",
+  "Movie" : "The Revenant"
+} ]

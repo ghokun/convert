@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Locale;
-import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
 
 final class ConversionUtil {
@@ -251,10 +250,8 @@ final class ConversionUtil {
                                     .map(TextNode::valueOf)
                                     .toList());
                 }
-                values.addPOJO(
-                        ImmutableList.copyOf(next.fields()).stream()
-                                .map(Map.Entry::getValue)
-                                .toList());
+                var value = values.addArray();
+                keys.forEach(key -> value.add(next.get(key.asText())));
             }
             return deduplicated;
         }

@@ -5,7 +5,6 @@ plugins {
     id "com.diffplug.spotless" version "${spotlessVersion}"
     id "net.ltgt.errorprone" version "${errorPronePluginVersion}"
     id "org.graalvm.buildtools.native" version "${graalvmBuildtoolsVersion}"
-    id "org.jreleaser" version "${jreleaserVersion}"
 }
 
 group = "dev.gokhun"
@@ -111,37 +110,4 @@ graalvmNative {
         resources.autodetect()
     }
     toolchainDetection = false
-}
-
-jreleaser {
-    assemble {
-        nativeImage {
-            convert {
-                active = "ALWAYS"
-                stereotype = "CLI"
-                executable = "convert"
-                mainJar {
-                    path = "${buildDir}/libs/{{projectName}}-{{projectVersion}}.jar"
-                }
-            }
-        }
-    }
-    project {
-        authors = ["ghokun"]
-        description = "Convert your data files"
-        license = "Apache-2.0"
-        inceptionYear = "2023"
-        website = "https://github.com/ghokun/convert"
-    }
-    release {
-        github {
-            repoOwner = "ghokun"
-            username = "ghokun"
-            name = "convert"
-            changelog {
-                formatted = "ALWAYS"
-                preset = "conventional-commits"
-            }
-        }
-    }
 }

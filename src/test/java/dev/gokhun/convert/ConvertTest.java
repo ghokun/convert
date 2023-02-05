@@ -64,7 +64,7 @@ final class ConvertTest {
         assertThat(systemManager.getExitStatus()).isEqualTo(USAGE);
         assertThat(systemManager.getOutput()).isEmpty();
         assertThat(systemManager.getError())
-                .isEqualTo(
+                .isEqualToNormalizingNewlines(
                         """
 Missing required options: '--input=<input>', '--output=<output>'
 Usage: convert [-hV] [--deduplicate-keys] [--indent-yaml] [--minimize-yaml-quotes] [--pretty] -f=<input> -o=<output>

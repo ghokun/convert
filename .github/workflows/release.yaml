@@ -37,7 +37,7 @@ jobs:
           native-image-job-reports: 'true'
 
       - name: 'Check'
-        run: ./gradlew check
+        run: ./gradlew -Pversion=${{ github.event.inputs.version }} check
 
       - name: 'Build native executable and compress'
         run: ./gradlew -Pversion=${{ github.event.inputs.version }} generatePackage

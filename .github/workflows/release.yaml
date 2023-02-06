@@ -1,0 +1,70 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version'
+        required: true
+
+env:
+  JAVA_VERSION: '19'
+  GRAAL_VERSION: '22.3.1'
+
+jobs:
+  build:
+    name: 'Build convert on ${{ matrix.os }}'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ ubuntu-latest, macOS-latest, windows-latest ]
+    steps:
+      - name: 'Check out repository'
+        uses: actions/checkout@v3
+
+      - name: 'Add Developer Command Prompt for Microsoft Visual C++'
+        if: ${{ runner.os == 'Windows' }}
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: 'Setup GraalVM ${{GRAAL_VERSION}}'
+        uses: graalvm/setup-graalvm@v1
+        with:
+          version: ${{ env.GRAAL_VERSION }}
+          java-version: ${{ env.JAVA_VERSION }}
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          native-image-job-reports: 'true'
+
+      - name: 'Check'
+        run: ./gradlew check
+
+      - name: 'Build native executable and compress'
+        run: ./gradlew -Pversion=${{ github.event.inputs.version }} generatePackage
+
+      - name: 'Upload build artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifacts
+          path: build/**/*.tgz
+
+  release:
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Check out repository'
+        uses: actions/checkout@v3
+
+      - name: 'Download all build artifacts'
+        uses: actions/download-artifact@v3
+
+      - name: 'Setup GraalVM ${{GRAAL_VERSION}}'
+        uses: graalvm/setup-graalvm@v1
+        with:
+          version: ${{ env.GRAAL_VERSION }}
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: 'Release with JReleaser'
+        env:
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew -Pversion=${{ github.event.inputs.version }} -DartifactsDir=artifacts jreleaserFullRelease

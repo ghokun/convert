@@ -8,20 +8,22 @@ env:
 
 jobs:
   build:
-    name: Build convert on ${{ matrix.os }}
+    name: 'Build convert on ${{ matrix.os }}'
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: true
       matrix:
         os: [ ubuntu-latest, macOS-latest, windows-latest ]
     steps:
       - name: 'Check out repository'
         uses: actions/checkout@v3
 
-      - name: 'Add Developer Command Prompt for Microsoft Visual C++ '
+      - name: 'Add Developer Command Prompt for Microsoft Visual C++'
         if: ${{ runner.os == 'Windows' }}
         uses: ilammy/msvc-dev-cmd@v1
 
-      - uses: graalvm/setup-graalvm@v1
+      - name: 'Setup GraalVM ${{GRAAL_VERSION}}'
+        uses: graalvm/setup-graalvm@v1
         with:
           version: ${{ env.GRAAL_VERSION }}
           java-version: ${{ env.JAVA_VERSION }}
@@ -29,11 +31,11 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
 
-      - name: Check
+      - name: 'Check'
         run: ./gradlew check
 
-      - name: Native test
+      - name: 'Native test'
         run: ./gradlew nativeTest --stacktrace
 
-      - name: Native compile
+      - name: 'Native compile'
         run: ./gradlew nativeCompile --stacktrace

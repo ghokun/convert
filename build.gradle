@@ -5,6 +5,7 @@ plugins {
     id "com.diffplug.spotless" version "${spotlessVersion}"
     id "net.ltgt.errorprone" version "${errorPronePluginVersion}"
     id "org.graalvm.buildtools.native" version "${graalvmBuildtoolsVersion}"
+    id "org.jreleaser" version "${jreleaserVersion}"
 }
 
 group = "dev.gokhun"
@@ -45,8 +46,11 @@ application {
 }
 
 def generatedSources = "${buildDir}/generated"
+def taskGroup = "convert"
+def os = org.gradle.internal.os.OperatingSystem.current()
 
 tasks.register("generateVersionProvider") {
+    group = taskGroup
     doFirst {
         def versionProvider = file("${generatedSources}/dev/gokhun/convert/VersionProvider.java")
         versionProvider.parentFile.mkdirs()
@@ -62,6 +66,17 @@ final class VersionProvider implements picocli.CommandLine.IVersionProvider {
 }
 """
     }
+}
+
+tasks.register("generatePackage", Tar) {
+    group = taskGroup
+    dependsOn("nativeCompile")
+
+    archiveFileName = "${project.name}-${project.version}-${os.nativePrefix}-${System.getProperty('os.arch')}.tgz"
+    compression = Compression.GZIP
+    destinationDirectory = layout.buildDirectory.dir("dist")
+
+    from layout.buildDirectory.files("native/nativeCompile/convert", "native/nativeCompile/convert.exe")
 }
 
 sourceSets.main.java.srcDirs += generatedSources
@@ -110,4 +125,36 @@ graalvmNative {
         resources.autodetect()
     }
     toolchainDetection = false
+}
+
+jreleaser {
+    project {
+        authors = ['ghokun']
+        license = 'Apache-2.0'
+        links {
+            homepage = 'https://github.com/ghokun/convert'
+        }
+        inceptionYear = '2023'
+    }
+    release {
+        github {
+            overwrite= true
+            sign= true
+        }
+    }
+    distributions {
+        convert {
+            artifacts {
+                artifact {
+                    path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-darwin-x86_64.tgz"
+                }
+                artifact {
+                    path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tgz"
+                }
+                artifact {
+                    path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-windows-x86_64.tgz"
+                }
+            }
+        }
+    }
 }

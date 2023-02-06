@@ -77,6 +77,8 @@ tasks.register("generatePackage", Tar) {
     destinationDirectory = layout.buildDirectory.dir("dist")
 
     from layout.buildDirectory.files("native/nativeCompile/convert", "native/nativeCompile/convert.exe")
+    println("Generating package with name:")
+    println(archiveFileName)
 }
 
 sourceSets.main.java.srcDirs += generatedSources
@@ -151,9 +153,9 @@ jreleaser {
                 artifact {
                     path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tgz"
                 }
-                artifact {
-                    path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-windows-x86_64.tgz"
-                }
+                /*artifact {
+                 path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-windows-x86_64.tgz"
+                 }*/
             }
         }
     }

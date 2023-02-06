@@ -107,6 +107,9 @@ sdk env
 
 # Test building a native executable using metadata
 ./gradlew -Pagent nativeTest
+
+# Generate a distributable package with VERSION
+./gradlew -Pversion=${VERSION} generatePackage
 ```
 
 ## TODO list
@@ -119,13 +122,13 @@ sdk env
   - [x] Generate/Analyze/Validate reflection configs
   - [ ] Visualize image size with GraalVM Dashboard
 - [ ] Set up JReleaser to release on:
-  - [ ] GitHub
+  - [x] GitHub
   - [ ] Homebrew
 - [ ] Build for OS / Arch combinations:
-  - [ ] Windows - amd64
-  - [ ] Darwin - amd64
+  - [x] Windows - amd64
+  - [x] Darwin - amd64
   - [ ] Darwin - aarch64
-  - [ ] Linux - amd64
+  - [x] Linux - amd64
   - [ ] Linux - aarch64
 - [ ] Streaming support
   - [ ] Read data from `STDIN`

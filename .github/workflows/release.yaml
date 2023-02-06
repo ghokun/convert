@@ -37,10 +37,10 @@ jobs:
           native-image-job-reports: 'true'
 
       - name: 'Check'
-        run: ./gradlew -Pversion=${{ github.event.inputs.version }} check
+        run: ./gradlew check -Pversion=${{ github.event.inputs.version }}
 
       - name: 'Build native executable and compress'
-        run: ./gradlew -Pversion=${{ github.event.inputs.version }} generatePackage
+        run: ./gradlew generatePackage -Pversion=${{ github.event.inputs.version }}
 
       - name: 'Upload build artifact'
         uses: actions/upload-artifact@v3
@@ -67,4 +67,4 @@ jobs:
       - name: 'Release with JReleaser'
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew -Pversion=${{ github.event.inputs.version }} -DartifactsDir=artifacts jreleaserFullRelease
+        run: ./gradlew jreleaserFullRelease -Pversion=${{ github.event.inputs.version }} -DartifactsDir=artifacts

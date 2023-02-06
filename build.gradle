@@ -129,17 +129,17 @@ graalvmNative {
 
 jreleaser {
     project {
-        authors = ['ghokun']
-        license = 'Apache-2.0'
+        authors = ["ghokun"]
+        description = "Convert your data files"
+        license = "Apache-2.0"
         links {
-            homepage = 'https://github.com/ghokun/convert'
+            homepage = "https://github.com/ghokun/convert"
         }
-        inceptionYear = '2023'
+        inceptionYear = "2023"
     }
     release {
         github {
             overwrite= true
-            sign= true
         }
     }
     distributions {

@@ -22,7 +22,7 @@ jobs:
         if: ${{ runner.os == 'Windows' }}
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: 'Setup GraalVM ${{GRAAL_VERSION}}'
+      - name: 'Setup GraalVM ${{ env.GRAAL_VERSION }}'
         uses: graalvm/setup-graalvm@v1
         with:
           version: ${{ env.GRAAL_VERSION }}

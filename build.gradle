@@ -72,9 +72,9 @@ tasks.register("generatePackage", Tar) {
     group = taskGroup
     dependsOn("nativeCompile")
 
-    def architecture = System.getProperty("os.arch")
-    def osName = os.getNativePrefix() == "darwin" ? os.getNativePrefix() : os.getFamilyName()
-    archiveFileName = "${project.name}-${project.version}-${osName}-${architecture}.tgz"
+    def osName = os.isMacOsX() ? os.getNativePrefix() : os.getFamilyName()
+    def arch = System.getProperty("os.arch")
+    archiveFileName = "${project.name}-${project.version}-${osName}-${arch == 'amd64' ? 'x86_64' : arch}.tgz"
     compression = Compression.GZIP
     destinationDirectory = layout.buildDirectory.dir("dist")
 
@@ -146,25 +146,25 @@ jreleaser {
     }
     distributions {
         convert {
-            artifacts {
-                artifact {
-                    path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-darwin-x86_64.tgz"
-                }
-                artifact {
-                    path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tgz"
-                }
-                /*
-                 artifact {
-                 path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-darwin-aarch64.tgz"
-                 }
-                 artifact {
-                 path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-aarch64.tgz"
-                 }
-                 artifact {
-                 path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-windows-x86_64.tgz"
-                 }
-                 */
+            artifact {
+                path = "artifacts/dist/{{distributionName}}-{{projectVersion}}-darwin-x86_64.tgz"
+                platform = "osx-x86_64"
             }
+            artifact {
+                path = "artifacts/dist/{{distributionName}}-{{projectVersion}}-linux-x86_64.tgz"
+                platform = "linux-x86_64"
+            }
+            /*
+             artifact {
+             path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-darwin-aarch64.tgz"
+             }
+             artifact {
+             path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-aarch64.tgz"
+             }
+             artifact {
+             path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-windows-x86_64.tgz"
+             }
+             */
         }
     }
 }

@@ -58,6 +58,9 @@ jobs:
       - name: 'Download all build artifacts'
         uses: actions/download-artifact@v3
 
+      - name: 'Display structure of downloaded files'
+        run: ls -R
+
       - name: 'Setup GraalVM ${{ env.GRAAL_VERSION }}'
         uses: graalvm/setup-graalvm@v1
         with:
@@ -67,4 +70,4 @@ jobs:
       - name: 'Release with JReleaser'
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew jreleaserFullRelease -Pversion=${{ github.event.inputs.version }} -DartifactsDir=artifacts
+        run: ./gradlew jreleaserFullRelease -Pversion=${{ github.event.inputs.version }}

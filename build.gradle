@@ -167,4 +167,12 @@ jreleaser {
              */
         }
     }
+    signing {
+        active = org.jreleaser.model.Active.ALWAYS
+        armored = true
+        mode = org.jreleaser.model.Signing.Mode.COSIGN
+        cosign {
+            version = "1.13.1"
+        }
+    }
 }

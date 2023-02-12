@@ -151,6 +151,10 @@ jreleaser {
                 platform = "osx-x86_64"
             }
             artifact {
+                path = "artifacts/dist/{{distributionName}}-{{projectVersion}}-darwin-aarch64.tgz"
+                platform = "osx-aarch_64"
+            }
+            artifact {
                 path = "artifacts/dist/{{distributionName}}-{{projectVersion}}-linux-x86_64.tgz"
                 platform = "linux-x86_64"
             }
@@ -159,9 +163,6 @@ jreleaser {
                 platform = "windows-x86_64"
             }
             /*
-             artifact {
-             path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-darwin-aarch64.tgz"
-             }
              artifact {
              path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-aarch64.tgz"
              }

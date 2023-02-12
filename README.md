@@ -125,10 +125,10 @@ sdk env
   - [x] GitHub
   - [ ] Homebrew
 - [ ] Build for OS / Arch combinations:
-  - [x] Windows - amd64
-  - [x] Darwin - amd64
-  - [ ] Darwin - aarch64
-  - [x] Linux - amd64
+  - [x] Windows - x86_64
+  - [x] Darwin - x86_64
+  - [ ] Darwin - aarch64 (self hosted runner)
+  - [x] Linux - x86_64
   - [ ] Linux - aarch64
 - [ ] Streaming support
   - [ ] Read data from `STDIN`

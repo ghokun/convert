@@ -124,12 +124,12 @@ sdk env
 - [ ] Set up JReleaser to release on:
   - [x] GitHub
   - [ ] Homebrew
-- [ ] Build for OS / Arch combinations:
+- [x] Build for OS / Arch combinations:
   - [x] Windows - x86_64
   - [x] Darwin - x86_64
-  - [ ] Darwin - aarch64 (self hosted runner)
+  - [x] Darwin - aarch64 (self hosted runner)
   - [x] Linux - x86_64
-  - [ ] Linux - aarch64
+  - [x] Linux - aarch64 (self hosted docker runner)
 - [ ] Streaming support
   - [ ] Read data from `STDIN`
   - [ ] Handle huge files

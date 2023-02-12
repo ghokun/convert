@@ -159,14 +159,13 @@ jreleaser {
                 platform = "linux-x86_64"
             }
             artifact {
+                path = "artifacts/dist/{{distributionName}}-{{projectVersion}}-linux-aarch64.tgz"
+                platform = "linux-aarch_64"
+            }
+            artifact {
                 path = "artifacts/dist/{{distributionName}}-{{projectVersion}}-windows-x86_64.tgz"
                 platform = "windows-x86_64"
             }
-            /*
-             artifact {
-             path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-aarch64.tgz"
-             }
-             */
         }
     }
     signing {

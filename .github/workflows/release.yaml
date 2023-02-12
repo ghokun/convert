@@ -8,6 +8,7 @@ on:
         required: true
 
 env:
+  JAVA_DISTRO: 'zulu'
   JAVA_VERSION: '19'
   GRAAL_VERSION: '22.3.1'
 
@@ -62,11 +63,11 @@ jobs:
       - name: 'Display structure of downloaded files'
         run: ls -R
 
-      - name: 'Setup GraalVM ${{ env.GRAAL_VERSION }}'
-        uses: graalvm/setup-graalvm@v1
+      - name: 'Set up Java'
+        uses: actions/setup-java@v3
         with:
-          version: ${{ env.GRAAL_VERSION }}
           java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
 
       - name: 'Release with JReleaser'
         env:

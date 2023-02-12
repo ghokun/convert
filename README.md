@@ -121,9 +121,9 @@ sdk env
   - [x] Native compilation
   - [x] Generate/Analyze/Validate reflection configs
   - [ ] Visualize image size with GraalVM Dashboard
-- [ ] Set up JReleaser to release on:
+- [x] Set up JReleaser to release on:
   - [x] GitHub
-  - [ ] Homebrew
+  - [x] Homebrew
 - [x] Build for OS / Arch combinations:
   - [x] Windows - x86_64
   - [x] Darwin - x86_64

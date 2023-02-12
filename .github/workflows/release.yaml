@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: artifacts
-          path: build/**/*.tgz
+          path: build/**/*.zip
 
   release:
     name: 'Release convert'
@@ -71,7 +71,5 @@ jobs:
       - name: 'Release with JReleaser'
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          JRELEASER_COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          JRELEASER_COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-          JRELEASER_COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY }}
+          JRELEASER_HOMEBREW_GITHUB_TOKEN: ${{ secrets.JRELEASER_HOMEBREW_GITHUB_TOKEN }}
         run: ./gradlew jreleaserFullRelease -Pversion='${{ github.event.inputs.version }}'

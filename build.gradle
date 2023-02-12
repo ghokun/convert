@@ -5,7 +5,6 @@ plugins {
     id "com.diffplug.spotless" version "${spotlessVersion}"
     id "net.ltgt.errorprone" version "${errorPronePluginVersion}"
     id "org.graalvm.buildtools.native" version "${graalvmBuildtoolsVersion}"
-    id "org.jreleaser" version "${jreleaserVersion}"
 }
 
 group = "dev.gokhun"
@@ -126,54 +125,4 @@ graalvmNative {
         resources.autodetect()
     }
     toolchainDetection = false
-}
-
-jreleaser {
-    project {
-        authors = ["ghokun"]
-        description = "Convert your data files"
-        license = "Apache-2.0"
-        links {
-            homepage = "https://github.com/ghokun/convert"
-        }
-        inceptionYear = "2023"
-    }
-    release {
-        github {
-            overwrite = true
-        }
-    }
-    packagers {
-        brew {
-            active = org.jreleaser.model.Active.RELEASE
-            formulaName = "convert"
-            multiPlatform = true
-        }
-    }
-    distributions {
-        convert {
-            distributionType = org.jreleaser.model.Distribution.DistributionType.BINARY
-            stereotype = org.jreleaser.model.Stereotype.CLI
-            artifact {
-                path = "artifacts/dist/{{distributionName}}-{{projectVersion}}-darwin-x86_64.zip"
-                platform = "osx-x86_64"
-            }
-            artifact {
-                path = "artifacts/dist/{{distributionName}}-{{projectVersion}}-darwin-aarch64.zip"
-                platform = "osx-aarch_64"
-            }
-            artifact {
-                path = "artifacts/dist/{{distributionName}}-{{projectVersion}}-linux-x86_64.zip"
-                platform = "linux-x86_64"
-            }
-            artifact {
-                path = "artifacts/dist/{{distributionName}}-{{projectVersion}}-linux-aarch64.zip"
-                platform = "linux-aarch_64"
-            }
-            artifact {
-                path = "artifacts/dist/{{distributionName}}-{{projectVersion}}-windows-x86_64.zip"
-                platform = "windows-x86_64"
-            }
-        }
-    }
 }

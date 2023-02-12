@@ -1,0 +1,33 @@
+project:
+  name: convert
+  description: Convert your data files
+  links:
+    homepage: https://github.com/ghokun/convert
+  authors:
+    - ghokun
+  license: Apache-2.0
+  inceptionYear: 2023
+  stereotype: cli
+
+release:
+  github:
+    overwrite: true
+
+distributions:
+  convert:
+    artifacts:
+      - path: "artifacts/dist/{{distributionName}}-{{projectVersion}}-darwin-x86_64.zip"
+        platform: "osx-x86_64"
+      - path: "artifacts/dist/{{distributionName}}-{{projectVersion}}-darwin-aarch64.zip"
+        platform: "osx-aarch_64"
+      - path: "artifacts/dist/{{distributionName}}-{{projectVersion}}-linux-x86_64.zip"
+        platform: "linux-x86_64"
+      - path: "artifacts/dist/{{distributionName}}-{{projectVersion}}-linux-aarch64.zip"
+        platform: "linux-aarch_64"
+      - path: "artifacts/dist/{{distributionName}}-{{projectVersion}}-windows-x86_64.zip"
+        platform: "windows-x86_64"
+    brew:
+      active: RELEASE
+      formulaName: convert
+      multiPlatform: true
+    type: BINARY

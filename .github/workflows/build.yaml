@@ -35,7 +35,7 @@ jobs:
         run: ./gradlew check
 
       - name: 'Native test'
-        run: ./gradlew nativeTest --stacktrace
+        run: ./gradlew nativeTest
 
-      - name: 'Native compile'
-        run: ./gradlew nativeCompile --stacktrace
+      - name: 'Native compile and generate package'
+        run: ./gradlew generatePackage

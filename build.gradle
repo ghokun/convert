@@ -141,7 +141,7 @@ jreleaser {
     }
     release {
         github {
-            overwrite= true
+            overwrite = true
         }
     }
     distributions {
@@ -153,9 +153,9 @@ jreleaser {
                 artifact {
                     path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tgz"
                 }
-                /*artifact {
-                 path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-windows-x86_64.tgz"
-                 }*/
+                artifact {
+                    path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-windows-x86_64.tgz"
+                }
             }
         }
     }

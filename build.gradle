@@ -72,13 +72,13 @@ tasks.register("generatePackage", Tar) {
     group = taskGroup
     dependsOn("nativeCompile")
 
-    archiveFileName = "${project.name}-${project.version}-${os.nativePrefix}-${System.getProperty('os.arch')}.tgz"
+    def architecture = System.getProperty("os.arch")
+    def osName = os.getNativePrefix() == "darwin" ? os.getNativePrefix() : os.getFamilyName()
+    archiveFileName = "${project.name}-${project.version}-${osName}-${architecture}.tgz"
     compression = Compression.GZIP
     destinationDirectory = layout.buildDirectory.dir("dist")
 
     from layout.buildDirectory.files("native/nativeCompile/convert", "native/nativeCompile/convert.exe")
-    println("Generating package with name:")
-    println(archiveFileName)
 }
 
 sourceSets.main.java.srcDirs += generatedSources
@@ -153,9 +153,17 @@ jreleaser {
                 artifact {
                     path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tgz"
                 }
-                artifact {
-                    path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-windows-x86_64.tgz"
-                }
+                /*
+                 artifact {
+                 path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-darwin-aarch64.tgz"
+                 }
+                 artifact {
+                 path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-aarch64.tgz"
+                 }
+                 artifact {
+                 path = "{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-windows-x86_64.tgz"
+                 }
+                 */
             }
         }
     }

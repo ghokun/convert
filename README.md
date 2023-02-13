@@ -8,6 +8,18 @@ This is a data file converter that supports following files:
 - [TOML](https://toml.io/en/)
 - [properties](https://en.wikipedia.org/wiki/.properties)
 
+## Install
+
+```shell
+brew install ghokun/tap/convert
+
+# or
+brew tap ghokun/tap
+brew install convert
+
+# Windows users can download from releases page
+```
+
 ## Usage
 
 ```bash

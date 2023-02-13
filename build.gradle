@@ -67,16 +67,30 @@ final class VersionProvider implements picocli.CommandLine.IVersionProvider {
     }
 }
 
-tasks.register("generatePackage", Zip) {
+def osName = os.isMacOsX() ? os.getNativePrefix() : os.getFamilyName()
+def arch = System.getProperty("os.arch")
+def archiveName = "${project.name}-${project.version}-${osName}-${arch == 'amd64' ? 'x86_64' : arch}"
+
+tasks.register("copyBinaries", Copy) {
     group = taskGroup
     dependsOn("nativeCompile")
 
-    def osName = os.isMacOsX() ? os.getNativePrefix() : os.getFamilyName()
-    def arch = System.getProperty("os.arch")
-    archiveFileName = "${project.name}-${project.version}-${osName}-${arch == 'amd64' ? 'x86_64' : arch}.zip"
+    def binDir = file("${buildDir}/native/${archiveName}/bin/")
+    binDir.parentFile.mkdirs()
+
+    from os.isWindows() ? "${buildDir}/native/nativeCompile/convert.exe" : "${buildDir}/native/nativeCompile/convert"
+    into binDir
+}
+
+tasks.register("generatePackage", Zip) {
+    group = taskGroup
+    dependsOn("copyBinaries")
+
+    archiveFileName = "${archiveName}.zip"
     destinationDirectory = layout.buildDirectory.dir("dist")
 
-    from layout.buildDirectory.files("native/nativeCompile/convert", "native/nativeCompile/convert.exe")
+    from layout.buildDirectory.dir("native")
+    include "${archiveName}/**"
 }
 
 sourceSets.main.java.srcDirs += generatedSources

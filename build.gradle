@@ -5,6 +5,7 @@ plugins {
     id "com.diffplug.spotless" version "${spotlessVersion}"
     id "net.ltgt.errorprone" version "${errorPronePluginVersion}"
     id "org.graalvm.buildtools.native" version "${graalvmBuildtoolsVersion}"
+    id "org.jetbrains.gradle.upx" version "${upxVersion}"
 }
 
 group = "dev.gokhun"

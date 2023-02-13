@@ -19,6 +19,9 @@ jobs:
       fail-fast: true
       matrix:
         os: [ ubuntu-latest, macOS-latest, windows-latest, macOS-arm64, linux-arm64 ]
+        include:
+          - os: windows-latest
+            suffix: .exe
     steps:
       - name: 'Check out repository'
         uses: actions/checkout@v3
@@ -39,7 +42,19 @@ jobs:
       - name: 'Check'
         run: ./gradlew check -Pversion='${{ github.event.inputs.version }}'
 
-      - name: 'Build native executable and compress'
+      - name: 'Build native executable'
+        run: ./gradlew nativeCompile -Pversion='${{ github.event.inputs.version }}'
+
+      - name: 'Compress with UPX'
+        if: ${{ runner.os == 'Windows' || runner.os == 'Linux' }}
+        uses: crazy-max/ghaction-upx@v2
+        with:
+          version: latest
+          files: |
+            ./build/native/nativeCompile/convert${{ matrix.suffix }}
+          args: --best
+
+      - name: 'Generate package'
         run: ./gradlew generatePackage -Pversion='${{ github.event.inputs.version }}'
 
       - name: 'Upload build artifact'

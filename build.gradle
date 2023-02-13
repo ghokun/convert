@@ -5,7 +5,6 @@ plugins {
     id "com.diffplug.spotless" version "${spotlessVersion}"
     id "net.ltgt.errorprone" version "${errorPronePluginVersion}"
     id "org.graalvm.buildtools.native" version "${graalvmBuildtoolsVersion}"
-    id "org.jetbrains.gradle.upx" version "${upxVersion}"
 }
 
 group = "dev.gokhun"
@@ -74,7 +73,7 @@ def archiveName = "${project.name}-${project.version}-${osName}-${arch == 'amd64
 
 tasks.register("copyBinaries", Copy) {
     group = taskGroup
-    dependsOn("nativeCompile")
+    mustRunAfter("nativeCompile")
 
     def binDir = file("${buildDir}/native/${archiveName}/bin/")
     binDir.parentFile.mkdirs()

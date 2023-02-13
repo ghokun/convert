@@ -121,7 +121,7 @@ sdk env
 ./gradlew -Pagent nativeTest
 
 # Generate a distributable package with VERSION
-./gradlew -Pversion=${VERSION} generatePackage
+./gradlew -Pversion=${VERSION} nativeCompile generatePackage
 ```
 
 ## TODO list
@@ -146,5 +146,5 @@ sdk env
   - [ ] Read data from `STDIN`
   - [ ] Handle huge files
   - [ ] Handle partial inputs (streaming json logs ?)
-- [ ] Minify binary with UPX on supported platforms
+- [x] Minify binary with UPX on supported platforms
 - [ ] Have fun

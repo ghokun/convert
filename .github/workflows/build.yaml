@@ -37,5 +37,5 @@ jobs:
       - name: 'Native test'
         run: ./gradlew nativeTest
 
-      - name: 'Native compile and generate package'
-        run: ./gradlew generatePackage
+      - name: 'Native compile'
+        run: ./gradlew nativeCompile

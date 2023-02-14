@@ -137,7 +137,12 @@ graalvmNative {
     binaries.configureEach {
         resources.autodetect()
         if (os.isLinux()) {
-            buildArgs.add("-H:+StaticExecutableWithDynamicLibC")
+            if (arch == "amd64") {
+                buildArgs.add("--static")
+                buildArgs.add("--libc=musl")
+            } else {
+                buildArgs.add("-H:+StaticExecutableWithDynamicLibC")
+            }
         }
     }
     toolchainDetection = false

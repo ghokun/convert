@@ -30,6 +30,7 @@ jobs:
           components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
+          native-image-musl: ${{ matrix.os == 'ubuntu-latest' }}
           cache: 'gradle'
 
       - name: 'Check'

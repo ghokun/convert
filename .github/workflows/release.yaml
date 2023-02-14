@@ -38,6 +38,7 @@ jobs:
           components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
+          cache: 'gradle'
 
       - name: 'Check'
         run: ./gradlew check -Pversion='${{ github.event.inputs.version }}'

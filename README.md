@@ -1,4 +1,4 @@
-# Convert
+# Convert [![Build](https://github.com/ghokun/convert/actions/workflows/build.yaml/badge.svg)](https://github.com/ghokun/convert/actions/workflows/build.yaml)
 
 This is a data file converter that supports following files:
 

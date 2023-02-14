@@ -47,6 +47,9 @@ application {
 def generatedSources = "${buildDir}/generated"
 def taskGroup = "convert"
 def os = org.gradle.internal.os.OperatingSystem.current()
+def osName = os.isMacOsX() ? os.getNativePrefix() : os.getFamilyName()
+def arch = System.getProperty("os.arch")
+def archiveName = "${project.name}-${project.version}-${osName}-${arch == 'amd64' ? 'x86_64' : arch}"
 
 tasks.register("generateVersionProvider") {
     group = taskGroup
@@ -66,10 +69,6 @@ final class VersionProvider implements picocli.CommandLine.IVersionProvider {
 """
     }
 }
-
-def osName = os.isMacOsX() ? os.getNativePrefix() : os.getFamilyName()
-def arch = System.getProperty("os.arch")
-def archiveName = "${project.name}-${project.version}-${osName}-${arch == 'amd64' ? 'x86_64' : arch}"
 
 tasks.register("copyBinaries", Copy) {
     group = taskGroup
@@ -137,6 +136,9 @@ spotless {
 graalvmNative {
     binaries.configureEach {
         resources.autodetect()
+        if (os.isLinux()) {
+            buildArgs.add("-H:+StaticExecutableWithDynamicLibC")
+        }
     }
     toolchainDetection = false
 }

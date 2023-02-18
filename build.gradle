@@ -3,14 +3,52 @@ plugins {
     id "checkstyle"
     id "com.adarshr.test-logger" version "${testLoggerVersion}"
     id "com.diffplug.spotless" version "${spotlessVersion}"
+    id "idea"
     id "net.ltgt.errorprone" version "${errorPronePluginVersion}"
     id "org.graalvm.buildtools.native" version "${graalvmBuildtoolsVersion}"
 }
 
-group = "dev.gokhun"
-
 repositories {
     mavenCentral()
+}
+
+group = "dev.gokhun"
+
+def generatedSources = "${buildDir}/generated"
+def taskGroup = "convert"
+def os = org.gradle.internal.os.OperatingSystem.current()
+def osName = os.isMacOsX() ? os.getNativePrefix() : os.getFamilyName()
+def arch = System.getProperty("os.arch")
+def archiveName = "${project.name}-${project.version}-${osName}-${arch == 'amd64' ? 'x86_64' : arch}"
+
+sourceSets {
+    main {
+        java {
+            srcDirs += generatedSources
+        }
+    }
+    e2e {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir "${projectDir}/src/e2e/java"
+        }
+        resources{
+            srcDir "${projectDir}/src/e2e/resources"
+        }
+    }
+}
+
+configurations {
+    e2eImplementation.extendsFrom testImplementation
+    e2eRuntime.extendsFrom testRuntime
+}
+
+idea {
+    module {
+        testSources.from(sourceSets.e2e.java.srcDirs)
+        testResources.from(sourceSets.e2e.resources.srcDirs)
+    }
 }
 
 dependencies {
@@ -33,6 +71,11 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-params"
     testImplementation "org.assertj:assertj-core:${assertjVersion}"
 
+    e2eImplementation platform("io.cucumber:cucumber-bom:${cucumberVersion}")
+    e2eImplementation "io.cucumber:cucumber-java"
+    e2eImplementation "io.cucumber:cucumber-junit-platform-engine"
+    e2eImplementation "org.junit.platform:junit-platform-suite"
+
     errorprone "com.google.errorprone:error_prone_core:${errorProneVersion}"
     errorprone "tech.picnic.error-prone-support:error-prone-contrib:${errorProneSupportVersion}"
     errorprone "tech.picnic.error-prone-support:refaster-runner:${errorProneSupportVersion}"
@@ -43,13 +86,6 @@ application {
     sourceCompatibility = JavaVersion.VERSION_19
     targetCompatibility = JavaVersion.VERSION_19
 }
-
-def generatedSources = "${buildDir}/generated"
-def taskGroup = "convert"
-def os = org.gradle.internal.os.OperatingSystem.current()
-def osName = os.isMacOsX() ? os.getNativePrefix() : os.getFamilyName()
-def arch = System.getProperty("os.arch")
-def archiveName = "${project.name}-${project.version}-${osName}-${arch == 'amd64' ? 'x86_64' : arch}"
 
 tasks.register("generateVersionProvider") {
     group = taskGroup
@@ -92,8 +128,6 @@ tasks.register("generatePackage", Zip) {
     include "${archiveName}/**"
 }
 
-sourceSets.main.java.srcDirs += generatedSources
-
 tasks.withType(JavaCompile).configureEach {
     dependsOn("generateVersionProvider")
     options.compilerArgs += [
@@ -107,10 +141,19 @@ test {
     useJUnitPlatform()
 }
 
+tasks.register("e2e", Test) {
+    group = taskGroup
+    systemProperty("cucumber.junit-platform.naming-strategy", "long")
+    useJUnitPlatform()
+    testClassesDirs = sourceSets.e2e.output.classesDirs
+    classpath = sourceSets.e2e.runtimeClasspath
+}
+
 checkstyle {
     configFile file("${project.rootDir}/checkstyle.xml")
     checkstyleMain.source = "src/main/java"
     checkstyleTest.source = "src/test/java"
+    checkstyleE2e.source "src/e2e/java"
 }
 
 spotless {
@@ -146,4 +189,8 @@ graalvmNative {
         }
     }
     toolchainDetection = false
+}
+
+tasks.withType(Copy).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

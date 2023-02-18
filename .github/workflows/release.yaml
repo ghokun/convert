@@ -42,10 +42,10 @@ jobs:
           cache: 'gradle'
 
       - name: 'Check'
-        run: ./gradlew check -Pversion='${{ github.event.inputs.version }}'
+        run: ./gradlew check -Pversion='${{ github.event.inputs.version }}' --no-daemon
 
       - name: 'Build native executable'
-        run: ./gradlew nativeCompile -Pversion='${{ github.event.inputs.version }}'
+        run: ./gradlew nativeCompile -Pversion='${{ github.event.inputs.version }}' --no-daemon
 
       - name: 'Compress with UPX'
         if: ${{ runner.os == 'Windows' || runner.os == 'Linux' }}
@@ -57,7 +57,7 @@ jobs:
           args: --best
 
       - name: 'Generate package'
-        run: ./gradlew generatePackage -Pversion='${{ github.event.inputs.version }}'
+        run: ./gradlew generatePackage -Pversion='${{ github.event.inputs.version }}' --no-daemon
 
       - name: 'Upload build artifact'
         uses: actions/upload-artifact@v3

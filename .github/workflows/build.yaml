@@ -34,10 +34,10 @@ jobs:
           cache: 'gradle'
 
       - name: 'Check'
-        run: ./gradlew check
+        run: ./gradlew check --no-daemon
 
       - name: 'Native test'
-        run: ./gradlew nativeTest
+        run: ./gradlew nativeTest --no-daemon
 
       - name: 'Native compile'
-        run: ./gradlew nativeCompile
+        run: ./gradlew nativeCompile --no-daemon

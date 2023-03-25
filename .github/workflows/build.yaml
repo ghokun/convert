@@ -49,7 +49,7 @@ jobs:
         run: ./gradlew nativeCompile --no-daemon
 
       - name: 'Compress with UPX'
-        if: ${{ runner.os == 'Linux' }}
+        if: ${{ runner.os == 'Windows' || runner.os == 'Linux' }}
         uses: crazy-max/ghaction-upx@v2
         with:
           version: latest

@@ -11,9 +11,8 @@ import java.io.InputStreamReader;
 import java.util.Locale;
 
 final class ProcessHelper {
-    private static final String USER_HOME = "user.home";
     private static final String OS_NAME = "os.name";
-    private static final File HOME_DIR = new File(System.getProperty(USER_HOME));
+    static final String RESOURCES_DIR = "./src/e2e/resources/dev/gokhun/convert";
 
     private ProcessHelper() {}
 
@@ -26,7 +25,7 @@ final class ProcessHelper {
                                         .add(buildCommand(command))
                                         .add(args)
                                         .build())
-                        .directory(HOME_DIR);
+                        .directory(new File(RESOURCES_DIR));
         try {
             Process process = processBuilder.start();
             return new ProcessResult(
@@ -52,9 +51,7 @@ final class ProcessHelper {
     }
 
     private static String[] buildCommand(String command) {
-        return isWindows()
-                ? new String[] {"cmd", "/c", command + ".exe"}
-                : new String[] {"sh", "-c", command};
+        return isWindows() ? new String[] {"cmd", "/c", command + ".exe"} : new String[] {command};
     }
 
     private static boolean isWindows() {

@@ -3,6 +3,7 @@
 This is a data file converter that supports following files:
 
 - [CSV](https://www.rfc-editor.org/rfc/rfc4180)
+- [TSV](https://www.iana.org/assignments/media-types/text/tab-separated-values)
 - [JSON](https://www.rfc-editor.org/rfc/rfc8259)
 - [YAML](https://yaml.org/spec/history/2001-05-26.html)
 - [TOML](https://toml.io/en/)
@@ -122,6 +123,9 @@ sdk env
 
 # Generate a distributable package with VERSION
 ./gradlew -Pversion=${VERSION} nativeCompile generatePackage
+
+# End to end test
+./gradlew e2e
 ```
 
 ## TODO list

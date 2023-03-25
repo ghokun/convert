@@ -17,8 +17,6 @@ brew install ghokun/tap/convert
 # or
 brew tap ghokun/tap
 brew install convert
-
-# Windows users can download from releases page
 ```
 
 ## Usage
@@ -141,7 +139,6 @@ sdk env
   - [x] GitHub
   - [x] Homebrew
 - [x] Build for OS / Arch combinations:
-  - [x] Windows - x86_64
   - [x] Darwin - x86_64
   - [x] Darwin - aarch64 (self hosted runner)
   - [x] Linux - x86_64
@@ -151,4 +148,4 @@ sdk env
   - [ ] Handle huge files
   - [ ] Handle partial inputs (streaming json logs ?)
 - [x] Minify binary with UPX on supported platforms
-- [ ] Have fun
+- [x] Have fun

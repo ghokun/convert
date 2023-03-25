@@ -113,8 +113,12 @@ tasks.register("copyBinaries", Copy) {
     def binDir = file("${buildDir}/native/${archiveName}/bin/")
     binDir.parentFile.mkdirs()
 
-    from os.isWindows() ? "${buildDir}/native/nativeCompile/convert.exe" : "${buildDir}/native/nativeCompile/convert"
+    from "${buildDir}/native/nativeCompile/convert"
     into binDir
+}
+
+tasks.withType(Copy).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.register("generatePackage", Zip) {
@@ -192,8 +196,4 @@ graalvmNative {
         buildArgs.add("-H:+RemoveUnusedSymbols")
     }
     toolchainDetection = false
-}
-
-tasks.withType(Copy).configureEach {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

@@ -8,10 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Locale;
 
 final class ProcessHelper {
-    private static final String OS_NAME = "os.name";
     static final String RESOURCES_DIR = "./src/e2e/resources/dev/gokhun/convert";
 
     private ProcessHelper() {}
@@ -20,11 +18,7 @@ final class ProcessHelper {
         ProcessBuilder processBuilder =
                 new ProcessBuilder()
                         .redirectErrorStream(true)
-                        .command(
-                                ImmutableList.<String>builder()
-                                        .add(buildCommand(command))
-                                        .add(args)
-                                        .build())
+                        .command(ImmutableList.<String>builder().add(command).add(args).build())
                         .directory(new File(RESOURCES_DIR));
         try {
             Process process = processBuilder.start();
@@ -48,14 +42,6 @@ final class ProcessHelper {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static String[] buildCommand(String command) {
-        return isWindows() ? new String[] {"cmd", "/c", command + ".exe"} : new String[] {command};
-    }
-
-    private static boolean isWindows() {
-        return System.getProperty(OS_NAME).toLowerCase(Locale.ENGLISH).startsWith("windows");
     }
 
     private static String clearAnsiFormatting(String coloredText) {

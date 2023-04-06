@@ -1,24 +1,28 @@
 package dev.gokhun.convert;
 
 import static dev.gokhun.convert.ConversionUtil.convert;
-import static java.nio.charset.StandardCharsets.UTF_8;
+
 import static picocli.CommandLine.ExitCode.OK;
 import static picocli.CommandLine.Help.Ansi.ON;
 import static picocli.CommandLine.Help.defaultColorScheme;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import dev.gokhun.convert.ConversionUtil.ConversionOptions;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.concurrent.Callable;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Help.ColorScheme;
 import picocli.CommandLine.IExecutionExceptionHandler;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.ParseResult;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.concurrent.Callable;
 
 @Command(
         mixinStandardHelpOptions = true,

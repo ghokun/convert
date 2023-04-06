@@ -2,7 +2,9 @@ package dev.gokhun.convert;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.io.Files.getFileExtension;
+
 import static dev.gokhun.convert.ConversionUtil.FileType.fromFileExtension;
+
 import static java.lang.Character.isSpaceChar;
 import static java.lang.Character.isWhitespace;
 import static java.util.Objects.requireNonNull;
@@ -22,13 +24,15 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Locale;
-import org.yaml.snakeyaml.Yaml;
 
 final class ConversionUtil {
     private ConversionUtil() {}

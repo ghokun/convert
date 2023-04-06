@@ -1,23 +1,22 @@
 package dev.gokhun.convert;
 
 import static com.google.common.io.Files.getFileExtension;
-import static java.nio.charset.StandardCharsets.UTF_8;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+
 import static picocli.CommandLine.ExitCode.OK;
 import static picocli.CommandLine.ExitCode.USAGE;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+
 import dev.gokhun.convert.Convert.ExecutionExceptionHandler;
 import dev.gokhun.convert.Convert.SystemManager;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.stream.Stream;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,8 +24,16 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
 import picocli.CommandLine;
 import picocli.CommandLine.IExecutionExceptionHandler;
+
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.stream.Stream;
 
 final class ConvertTest {
     private static final IExecutionExceptionHandler exceptionHandler =

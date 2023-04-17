@@ -162,7 +162,10 @@ checkstyle {
 
 spotless {
     java {
+        importOrder()
+        cleanthat()
         googleJavaFormat().aosp().reflowLongStrings()
+        formatAnnotations()
         target "src/*/java/**/*.java"
     }
     groovyGradle {
@@ -171,6 +174,10 @@ spotless {
         trimTrailingWhitespace()
         indentWithSpaces()
         endWithNewline()
+    }
+    gherkin {
+        target "src/*/resources/**/*.feature"
+        gherkinUtils()
     }
     format "misc", {
         target "*.md", ".gitignore", ".gitattributes"

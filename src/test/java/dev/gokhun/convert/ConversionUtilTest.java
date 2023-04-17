@@ -7,19 +7,23 @@ import static dev.gokhun.convert.ConversionUtil.FileType.JSON;
 import static dev.gokhun.convert.ConversionUtil.FileType.PROPERTIES;
 import static dev.gokhun.convert.ConversionUtil.FileType.TOML;
 import static dev.gokhun.convert.ConversionUtil.FileType.YAML;
-import static java.lang.Character.LINE_SEPARATOR;
-import static java.lang.Character.SPACE_SEPARATOR;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
+import static java.lang.Character.LINE_SEPARATOR;
+import static java.lang.Character.SPACE_SEPARATOR;
+
 import com.google.common.collect.ImmutableSet;
-import java.util.stream.Stream;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.stream.Stream;
 
 final class ConversionUtilTest {
 

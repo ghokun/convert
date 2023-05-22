@@ -2,9 +2,7 @@ package dev.gokhun.convert;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.io.Files.getFileExtension;
-
 import static dev.gokhun.convert.ConversionUtil.FileType.fromFileExtension;
-
 import static java.lang.Character.isSpaceChar;
 import static java.lang.Character.isWhitespace;
 import static java.util.Objects.requireNonNull;
@@ -24,15 +22,13 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import org.yaml.snakeyaml.Yaml;
 
 final class ConversionUtil {
     private ConversionUtil() {}
@@ -53,10 +49,9 @@ final class ConversionUtil {
             @Override
             Reader reader(ConversionOptions options) {
                 return file -> {
-                    var it =
-                            mapper.readerFor(new TypeReference<LinkedHashMap<String, String>>() {})
-                                    .with(schema.withColumnSeparator(options.csvSeparator()))
-                                    .readValues(file);
+                    var it = mapper.readerFor(new TypeReference<LinkedHashMap<String, String>>() {})
+                            .with(schema.withColumnSeparator(options.csvSeparator()))
+                            .readValues(file);
                     var factory = JsonNodeFactory.instance;
                     var result = factory.arrayNode();
                     while (it.hasNextValue()) {
@@ -74,11 +69,10 @@ final class ConversionUtil {
                             jsonNode instanceof ArrayNode ? jsonNode.elements().next() : jsonNode;
                     firstObject.fieldNames().forEachRemaining(csvSchemaBuilder::addColumn);
                     mapper.writerFor(JsonNode.class)
-                            .with(
-                                    csvSchemaBuilder
-                                            .build()
-                                            .withColumnSeparator(options.csvSeparator())
-                                            .withHeader())
+                            .with(csvSchemaBuilder
+                                    .build()
+                                    .withColumnSeparator(options.csvSeparator())
+                                    .withHeader())
                             .writeValue(file, jsonNode);
                 };
             }
@@ -93,18 +87,16 @@ final class ConversionUtil {
 
             @Override
             Writer writer(ConversionOptions options) {
-                return (file, jsonNode) ->
-                        (options.pretty()
-                                        ? mapper.writerWithDefaultPrettyPrinter()
-                                        : mapper.writer())
-                                .writeValue(file, jsonNode);
+                return (file, jsonNode) -> (options.pretty()
+                                ? mapper.writerWithDefaultPrettyPrinter()
+                                : mapper.writer())
+                        .writeValue(file, jsonNode);
             }
         },
         PROPERTIES(ImmutableSet.of("properties")) {
-            private static final JavaPropsMapper mapper =
-                    JavaPropsMapper.builder()
-                            .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
-                            .build();
+            private static final JavaPropsMapper mapper = JavaPropsMapper.builder()
+                    .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
+                    .build();
 
             @Override
             Reader reader(ConversionOptions options) {
@@ -140,15 +132,10 @@ final class ConversionUtil {
 
             @Override
             Writer writer(ConversionOptions options) {
-                return (file, jsonNode) ->
-                        mapper.configure(YAMLGenerator.Feature.INDENT_ARRAYS, options.indentYaml())
-                                .configure(
-                                        YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR,
-                                        options.indentYaml())
-                                .configure(
-                                        YAMLGenerator.Feature.MINIMIZE_QUOTES,
-                                        options.minimizeYamlQuotes())
-                                .writeValue(file, jsonNode);
+                return (file, jsonNode) -> mapper.configure(YAMLGenerator.Feature.INDENT_ARRAYS, options.indentYaml())
+                        .configure(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR, options.indentYaml())
+                        .configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, options.minimizeYamlQuotes())
+                        .writeValue(file, jsonNode);
             }
         };
 
@@ -163,17 +150,12 @@ final class ConversionUtil {
         abstract Writer writer(ConversionOptions options);
 
         static FileType fromFileExtension(String fileExtension) {
-            checkArgument(
-                    fileExtension != null && !fileExtension.isBlank(),
-                    "File type could not be determined!");
+            checkArgument(fileExtension != null && !fileExtension.isBlank(), "File type could not be determined!");
             return Arrays.stream(values())
                     .filter(f -> f.extensions.contains(fileExtension.toLowerCase(Locale.ENGLISH)))
                     .findAny()
-                    .orElseThrow(
-                            () ->
-                                    new IllegalArgumentException(
-                                            String.format(
-                                                    "Unsupported file type! [%s]", fileExtension)));
+                    .orElseThrow(() ->
+                            new IllegalArgumentException(String.format("Unsupported file type! [%s]", fileExtension)));
         }
     }
 
@@ -229,11 +211,7 @@ final class ConversionUtil {
 
             ConversionOptions build() {
                 return new ConversionOptions(
-                        this.csvSeparator,
-                        this.pretty,
-                        this.indentYaml,
-                        this.minimizeYamlQuotes,
-                        this.deduplicateKeys);
+                        this.csvSeparator, this.pretty, this.indentYaml, this.minimizeYamlQuotes, this.deduplicateKeys);
             }
         }
     }
@@ -249,10 +227,9 @@ final class ConversionUtil {
             while (it.hasNext()) {
                 var next = it.next();
                 if (keys.size() == 0) {
-                    keys.addAll(
-                            ImmutableList.copyOf(next.fieldNames()).stream()
-                                    .map(TextNode::valueOf)
-                                    .toList());
+                    keys.addAll(ImmutableList.copyOf(next.fieldNames()).stream()
+                            .map(TextNode::valueOf)
+                            .toList());
                 }
                 var value = values.addArray();
                 keys.forEach(key -> value.add(next.get(key.asText())));

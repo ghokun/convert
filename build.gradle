@@ -164,7 +164,7 @@ spotless {
     java {
         importOrder()
         cleanthat()
-        googleJavaFormat().aosp().reflowLongStrings()
+        palantirJavaFormat()
         formatAnnotations()
         target "src/*/java/**/*.java"
     }

@@ -2,16 +2,13 @@ package dev.gokhun.convert;
 
 import static dev.gokhun.convert.ProcessHelper.RESOURCES_DIR;
 import static dev.gokhun.convert.ProcessHelper.runCommand;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 import dev.gokhun.convert.ProcessHelper.ProcessResult;
-
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,34 +30,20 @@ public final class ConversionSteps {
 
     @When("convert is run with given input and output arguments")
     public void convertIsRunWithGivenInputAndOutputArguments(DataTable dataTable) {
-        dataTable
-                .asMaps()
-                .forEach(
-                        row -> {
-                            File outputFile = getFile(tempDir.getAbsolutePath(), row.get(OUTPUT));
-                            ProcessResult result =
-                                    runCommand(
-                                            "convert",
-                                            INPUT,
-                                            row.get(INPUT),
-                                            OUTPUT,
-                                            outputFile.getAbsolutePath());
-                            assertThat(result.exitCode()).isEqualTo(0);
-                            assertThat(outputFile).exists().isFile();
-                        });
+        dataTable.asMaps().forEach(row -> {
+            File outputFile = getFile(tempDir.getAbsolutePath(), row.get(OUTPUT));
+            ProcessResult result = runCommand("convert", INPUT, row.get(INPUT), OUTPUT, outputFile.getAbsolutePath());
+            assertThat(result.exitCode()).isEqualTo(0);
+            assertThat(outputFile).exists().isFile();
+        });
     }
 
     @Then("following files contain same content")
     public void followingFilesContainSameContent(DataTable dataTable) {
-        dataTable
-                .asMaps()
-                .forEach(
-                        row ->
-                                assertThat(getFile(tempDir.getAbsolutePath(), row.get(ACTUAL)))
-                                        .exists()
-                                        .isFile()
-                                        .hasSameTextualContentAs(
-                                                getFile(RESOURCES_DIR, row.get(EXPECTED))));
+        dataTable.asMaps().forEach(row -> assertThat(getFile(tempDir.getAbsolutePath(), row.get(ACTUAL)))
+                .exists()
+                .isFile()
+                .hasSameTextualContentAs(getFile(RESOURCES_DIR, row.get(EXPECTED))));
     }
 
     private static File getFile(String first, String... more) {

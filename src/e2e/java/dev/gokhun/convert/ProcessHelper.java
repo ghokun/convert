@@ -3,7 +3,6 @@ package dev.gokhun.convert;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.collect.ImmutableList;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -16,15 +15,13 @@ final class ProcessHelper {
     private ProcessHelper() {}
 
     static ProcessResult runCommand(String command, String... args) {
-        ProcessBuilder processBuilder =
-                new ProcessBuilder()
-                        .redirectErrorStream(true)
-                        .command(ImmutableList.<String>builder().add(command).add(args).build())
-                        .directory(new File(RESOURCES_DIR));
+        ProcessBuilder processBuilder = new ProcessBuilder()
+                .redirectErrorStream(true)
+                .command(ImmutableList.<String>builder().add(command).add(args).build())
+                .directory(new File(RESOURCES_DIR));
         try {
             Process process = processBuilder.start();
-            return new ProcessResult(
-                    process.waitFor(), clearAnsiFormatting(readOutput(process.getInputStream())));
+            return new ProcessResult(process.waitFor(), clearAnsiFormatting(readOutput(process.getInputStream())));
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }

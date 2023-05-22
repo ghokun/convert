@@ -1,28 +1,24 @@
 package dev.gokhun.convert;
 
 import static dev.gokhun.convert.ConversionUtil.convert;
-
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static picocli.CommandLine.ExitCode.OK;
 import static picocli.CommandLine.Help.Ansi.ON;
 import static picocli.CommandLine.Help.defaultColorScheme;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import dev.gokhun.convert.ConversionUtil.ConversionOptions;
-
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Help.ColorScheme;
-import picocli.CommandLine.IExecutionExceptionHandler;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.ParseResult;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.concurrent.Callable;
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Help.ColorScheme;
+import picocli.CommandLine.IExecutionExceptionHandler;
+import picocli.CommandLine.Option;
+import picocli.CommandLine.ParseResult;
 
 @Command(
         mixinStandardHelpOptions = true,
@@ -34,14 +30,12 @@ import java.util.concurrent.Callable;
 public final class Convert implements Callable<Integer> {
     private static final SystemManager systemManager = new DefaultSystemManager();
     private static final ColorScheme colorScheme = defaultColorScheme(ON);
-    private static final IExecutionExceptionHandler exceptionHandler =
-            new ExecutionExceptionHandler();
-    private static final CommandLine cmd =
-            new CommandLine(new Convert())
-                    .setOut(systemManager.getOut())
-                    .setErr(systemManager.getErr())
-                    .setExecutionExceptionHandler(exceptionHandler)
-                    .setColorScheme(colorScheme);
+    private static final IExecutionExceptionHandler exceptionHandler = new ExecutionExceptionHandler();
+    private static final CommandLine cmd = new CommandLine(new Convert())
+            .setOut(systemManager.getOut())
+            .setErr(systemManager.getErr())
+            .setExecutionExceptionHandler(exceptionHandler)
+            .setColorScheme(colorScheme);
 
     @Option(
             names = {"--from", "--input", "-f", "-i"},
@@ -89,9 +83,8 @@ public final class Convert implements Callable<Integer> {
             names = "--deduplicate-keys",
             order = 7,
             defaultValue = "false",
-            description =
-                    "Think csv but as json. Only available on conversions where the initial source"
-                            + " is array. Keys are arrays and values are arrays of arrays.")
+            description = "Think csv but as json. Only available on conversions where the initial source"
+                    + " is array. Keys are arrays and values are arrays of arrays.")
     boolean deduplicateKeys;
 
     @Override
@@ -126,11 +119,9 @@ public final class Convert implements Callable<Integer> {
     }
 
     static final class DefaultSystemManager implements SystemManager {
-        private final PrintWriter out =
-                new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.out, UTF_8)));
+        private final PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.out, UTF_8)));
 
-        private final PrintWriter err =
-                new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.err, UTF_8)));
+        private final PrintWriter err = new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.err, UTF_8)));
 
         @Override
         public PrintWriter getOut() {
@@ -151,8 +142,7 @@ public final class Convert implements Callable<Integer> {
     static final class ExecutionExceptionHandler implements IExecutionExceptionHandler {
 
         @Override
-        public int handleExecutionException(
-                Exception ex, CommandLine commandLine, ParseResult parseResult) {
+        public int handleExecutionException(Exception ex, CommandLine commandLine, ParseResult parseResult) {
             commandLine.getErr().println(commandLine.getColorScheme().errorText(ex.getMessage()));
             return commandLine.getExitCodeExceptionMapper() != null
                     ? commandLine.getExitCodeExceptionMapper().getExitCode(ex)

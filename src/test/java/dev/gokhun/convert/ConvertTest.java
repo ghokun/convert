@@ -1,22 +1,23 @@
 package dev.gokhun.convert;
 
 import static com.google.common.io.Files.getFileExtension;
-
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-
 import static picocli.CommandLine.ExitCode.OK;
 import static picocli.CommandLine.ExitCode.USAGE;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-
 import dev.gokhun.convert.Convert.ExecutionExceptionHandler;
 import dev.gokhun.convert.Convert.SystemManager;
-
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,20 +25,11 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
 import picocli.CommandLine;
 import picocli.CommandLine.IExecutionExceptionHandler;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.stream.Stream;
-
 final class ConvertTest {
-    private static final IExecutionExceptionHandler exceptionHandler =
-            new ExecutionExceptionHandler();
+    private static final IExecutionExceptionHandler exceptionHandler = new ExecutionExceptionHandler();
     private static final String SEMVER_REGEX =
             "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$";
 
@@ -45,12 +37,11 @@ final class ConvertTest {
     @Test
     void version1() {
         var systemManager = new MockSystemManager();
-        systemManager.exit(
-                new CommandLine(new Convert())
-                        .setOut(systemManager.getOut())
-                        .setErr(systemManager.getErr())
-                        .setExecutionExceptionHandler(exceptionHandler)
-                        .execute("-V"));
+        systemManager.exit(new CommandLine(new Convert())
+                .setOut(systemManager.getOut())
+                .setErr(systemManager.getErr())
+                .setExecutionExceptionHandler(exceptionHandler)
+                .execute("-V"));
 
         assertThat(systemManager.getExitStatus()).isEqualTo(OK);
         assertThat(systemManager.getOutput().trim()).matches(SEMVER_REGEX);
@@ -61,12 +52,11 @@ final class ConvertTest {
     @Test
     void help1() {
         var systemManager = new MockSystemManager();
-        systemManager.exit(
-                new CommandLine(new Convert())
-                        .setOut(systemManager.getOut())
-                        .setErr(systemManager.getErr())
-                        .setExecutionExceptionHandler(exceptionHandler)
-                        .execute());
+        systemManager.exit(new CommandLine(new Convert())
+                .setOut(systemManager.getOut())
+                .setErr(systemManager.getErr())
+                .setExecutionExceptionHandler(exceptionHandler)
+                .execute());
 
         assertThat(systemManager.getExitStatus()).isEqualTo(USAGE);
         assertThat(systemManager.getOutput()).isEmpty();
@@ -97,7 +87,8 @@ Converts one file type to another.
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
     final class ConversionTests {
-        @TempDir File outputDirectory;
+        @TempDir
+        File outputDirectory;
 
         @DisplayName("Should convert from input to output correctly")
         @MethodSource({
@@ -111,68 +102,45 @@ Converts one file type to another.
         void conversion1(String input, String output, String expected) {
             var outputPath = outputDirectory.getAbsolutePath() + output;
             var systemManager = new MockSystemManager();
-            systemManager.exit(
-                    new CommandLine(new Convert())
-                            .setOut(systemManager.getOut())
-                            .setErr(systemManager.getErr())
-                            .setExecutionExceptionHandler(exceptionHandler)
-                            .execute("-i", getTestResourcePath(input), "-o", outputPath));
+            systemManager.exit(new CommandLine(new Convert())
+                    .setOut(systemManager.getOut())
+                    .setErr(systemManager.getErr())
+                    .setExecutionExceptionHandler(exceptionHandler)
+                    .execute("-i", getTestResourcePath(input), "-o", outputPath));
 
             assertThat(systemManager.getOutput()).isEmpty();
             assertThat(systemManager.getError()).isEmpty();
             assertThat(systemManager.getExitStatus()).isEqualTo(OK);
-            assertThat(new File(outputPath))
-                    .hasSameTextualContentAs(new File(getTestResourcePath(expected)));
+            assertThat(new File(outputPath)).hasSameTextualContentAs(new File(getTestResourcePath(expected)));
         }
 
         private static Stream<Arguments> minimalInputProvider() {
-            var inputs =
-                    ImmutableSet.of(
-                            "json/mini1.json",
-                            "properties/mini1.properties",
-                            "toml/mini1.toml",
-                            "yaml/mini1.yaml");
-            return inputs.stream()
-                    .flatMap(input -> inputs.stream().map(output -> toArguments(input, output)));
+            var inputs = ImmutableSet.of(
+                    "json/mini1.json", "properties/mini1.properties", "toml/mini1.toml", "yaml/mini1.yaml");
+            return inputs.stream().flatMap(input -> inputs.stream().map(output -> toArguments(input, output)));
         }
 
         private static Stream<Arguments> fromJsonProvider() {
-            var outputs =
-                    ImmutableSet.of(
-                            "properties/fromjson.properties",
-                            "toml/fromjson.toml",
-                            "yaml/fromjson.yaml");
+            var outputs = ImmutableSet.of("properties/fromjson.properties", "toml/fromjson.toml", "yaml/fromjson.yaml");
 
             return outputs.stream().map(output -> toArguments("json/fromjson.json", output));
         }
 
         private static Stream<Arguments> fromPropertiesProvider() {
             var outputs =
-                    ImmutableSet.of(
-                            "json/fromproperties.json",
-                            "toml/fromproperties.toml",
-                            "yaml/fromproperties.yaml");
+                    ImmutableSet.of("json/fromproperties.json", "toml/fromproperties.toml", "yaml/fromproperties.yaml");
 
-            return outputs.stream()
-                    .map(output -> toArguments("properties/fromproperties.properties", output));
+            return outputs.stream().map(output -> toArguments("properties/fromproperties.properties", output));
         }
 
         private static Stream<Arguments> fromTomlProvider() {
-            var outputs =
-                    ImmutableSet.of(
-                            "json/fromtoml.json",
-                            "properties/fromtoml.properties",
-                            "yaml/fromtoml.yaml");
+            var outputs = ImmutableSet.of("json/fromtoml.json", "properties/fromtoml.properties", "yaml/fromtoml.yaml");
 
             return outputs.stream().map(output -> toArguments("toml/fromtoml.toml", output));
         }
 
         private static Stream<Arguments> fromYamlProvider() {
-            var outputs =
-                    ImmutableSet.of(
-                            "json/fromyaml.json",
-                            "properties/fromyaml.properties",
-                            "toml/fromyaml.toml");
+            var outputs = ImmutableSet.of("json/fromyaml.json", "properties/fromyaml.properties", "toml/fromyaml.toml");
 
             return outputs.stream().map(output -> toArguments("yaml/fromyaml.yaml", output));
         }
@@ -181,7 +149,8 @@ Converts one file type to another.
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
     final class JsonTests {
-        @TempDir File outputDirectory;
+        @TempDir
+        File outputDirectory;
 
         @DisplayName("Should prettify mini JSON")
         @Test
@@ -191,12 +160,11 @@ Converts one file type to another.
             String expected = getTestResourcePath("json/pretty1.json");
 
             var systemManager = new MockSystemManager();
-            systemManager.exit(
-                    new CommandLine(new Convert())
-                            .setOut(systemManager.getOut())
-                            .setErr(systemManager.getErr())
-                            .setExecutionExceptionHandler(exceptionHandler)
-                            .execute("-i", input, "-o", output, "--pretty"));
+            systemManager.exit(new CommandLine(new Convert())
+                    .setOut(systemManager.getOut())
+                    .setErr(systemManager.getErr())
+                    .setExecutionExceptionHandler(exceptionHandler)
+                    .execute("-i", input, "-o", output, "--pretty"));
 
             assertThat(systemManager.getExitStatus()).isEqualTo(OK);
             assertThat(new File(output)).hasSameTextualContentAs(new File(expected));
@@ -210,12 +178,11 @@ Converts one file type to another.
             String expected = getTestResourcePath("json/mini1.json");
 
             var systemManager = new MockSystemManager();
-            systemManager.exit(
-                    new CommandLine(new Convert())
-                            .setOut(systemManager.getOut())
-                            .setErr(systemManager.getErr())
-                            .setExecutionExceptionHandler(exceptionHandler)
-                            .execute("-i", input, "-o", output));
+            systemManager.exit(new CommandLine(new Convert())
+                    .setOut(systemManager.getOut())
+                    .setErr(systemManager.getErr())
+                    .setExecutionExceptionHandler(exceptionHandler)
+                    .execute("-i", input, "-o", output));
 
             assertThat(systemManager.getExitStatus()).isEqualTo(OK);
             assertThat(new File(output)).hasSameTextualContentAs(new File(expected));
@@ -225,7 +192,8 @@ Converts one file type to another.
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
     final class DeduplicationTests {
-        @TempDir File outputDirectory;
+        @TempDir
+        File outputDirectory;
 
         @DisplayName("Should deduplicate correctly")
         @MethodSource("deduplicateProvider")
@@ -233,32 +201,21 @@ Converts one file type to another.
         void deduplicate1(String input, String output, String expected) {
             var outputPath = outputDirectory.getAbsolutePath() + output;
             var systemManager = new MockSystemManager();
-            systemManager.exit(
-                    new CommandLine(new Convert())
-                            .setOut(systemManager.getOut())
-                            .setErr(systemManager.getErr())
-                            .setExecutionExceptionHandler(exceptionHandler)
-                            .execute(
-                                    "-i",
-                                    getTestResourcePath(input),
-                                    "-o",
-                                    outputPath,
-                                    "--pretty",
-                                    "--deduplicate-keys"));
+            systemManager.exit(new CommandLine(new Convert())
+                    .setOut(systemManager.getOut())
+                    .setErr(systemManager.getErr())
+                    .setExecutionExceptionHandler(exceptionHandler)
+                    .execute("-i", getTestResourcePath(input), "-o", outputPath, "--pretty", "--deduplicate-keys"));
 
             assertThat(systemManager.getOutput()).isEmpty();
             assertThat(systemManager.getError()).isEmpty();
             assertThat(systemManager.getExitStatus()).isEqualTo(OK);
-            assertThat(new File(outputPath))
-                    .hasSameTextualContentAs(new File(getTestResourcePath(expected)));
+            assertThat(new File(outputPath)).hasSameTextualContentAs(new File(getTestResourcePath(expected)));
         }
 
         private static Stream<Arguments> deduplicateProvider() {
-            var inputs =
-                    ImmutableSet.of(
-                            "csv/deduplicatefrom.csv",
-                            "json/deduplicatefrom.json",
-                            "yaml/deduplicatefrom.yaml");
+            var inputs = ImmutableSet.of(
+                    "csv/deduplicatefrom.csv", "json/deduplicatefrom.json", "yaml/deduplicatefrom.yaml");
 
             return inputs.stream().map(input -> toArguments(input, "json/deduplicateto.json"));
         }
@@ -267,7 +224,8 @@ Converts one file type to another.
     @SuppressWarnings("ClassCanBeStatic")
     @Nested
     final class CsvTests {
-        @TempDir File outputDirectory;
+        @TempDir
+        File outputDirectory;
 
         @DisplayName("Should convert csv correctly")
         @MethodSource("csvProvider")
@@ -276,36 +234,29 @@ Converts one file type to another.
             var outputPath = outputDirectory.getAbsolutePath() + output;
             var systemManager = new MockSystemManager();
             var args =
-                    ImmutableList.<String>builder()
-                            .add("-i", getTestResourcePath(input), "-o", outputPath, "--pretty");
+                    ImmutableList.<String>builder().add("-i", getTestResourcePath(input), "-o", outputPath, "--pretty");
             if (dedup) {
                 args.add("--deduplicate-keys");
             }
-            systemManager.exit(
-                    new CommandLine(new Convert())
-                            .setOut(systemManager.getOut())
-                            .setErr(systemManager.getErr())
-                            .setExecutionExceptionHandler(exceptionHandler)
-                            .execute(args.build().toArray(String[]::new)));
+            systemManager.exit(new CommandLine(new Convert())
+                    .setOut(systemManager.getOut())
+                    .setErr(systemManager.getErr())
+                    .setExecutionExceptionHandler(exceptionHandler)
+                    .execute(args.build().toArray(String[]::new)));
 
             assertThat(systemManager.getOutput()).isEmpty();
             assertThat(systemManager.getError()).isEmpty();
             assertThat(systemManager.getExitStatus()).isEqualTo(OK);
-            assertThat(new File(outputPath))
-                    .hasSameTextualContentAs(new File(getTestResourcePath(expected)));
+            assertThat(new File(outputPath)).hasSameTextualContentAs(new File(getTestResourcePath(expected)));
         }
 
         private static Stream<Arguments> csvProvider() {
-            return ImmutableMap.of("json/oscars.json", false, "json/oscars-dedup.json", true)
-                    .entrySet()
-                    .stream()
-                    .map(
-                            output ->
-                                    arguments(
-                                            "csv/oscars.csv",
-                                            "/actual." + getFileExtension(output.getKey()),
-                                            output.getKey(),
-                                            output.getValue()));
+            return ImmutableMap.of("json/oscars.json", false, "json/oscars-dedup.json", true).entrySet().stream()
+                    .map(output -> arguments(
+                            "csv/oscars.csv",
+                            "/actual." + getFileExtension(output.getKey()),
+                            output.getKey(),
+                            output.getValue()));
         }
     }
 

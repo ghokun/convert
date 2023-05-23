@@ -1,15 +1,15 @@
 plugins {
-    id "application"
-    id "checkstyle"
-    id "com.adarshr.test-logger" version "${testLoggerVersion}"
-    id "com.diffplug.spotless" version "${spotlessVersion}"
-    id "idea"
-    id "net.ltgt.errorprone" version "${errorPronePluginVersion}"
-    id "org.graalvm.buildtools.native" version "${graalvmBuildtoolsVersion}"
+  id "application"
+  id "checkstyle"
+  id "com.adarshr.test-logger" version "${testLoggerVersion}"
+  id "com.diffplug.spotless" version "${spotlessVersion}"
+  id "idea"
+  id "net.ltgt.errorprone" version "${errorPronePluginVersion}"
+  id "org.graalvm.buildtools.native" version "${graalvmBuildtoolsVersion}"
 }
 
 repositories {
-    mavenCentral()
+  mavenCentral()
 }
 
 group = "dev.gokhun"
@@ -22,78 +22,78 @@ def arch = System.getProperty("os.arch")
 def archiveName = "${project.name}-${project.version}-${osName}-${arch == 'amd64' ? 'x86_64' : arch}"
 
 sourceSets {
-    main {
-        java {
-            srcDirs += generatedSources
-        }
+  main {
+    java {
+      srcDirs += generatedSources
     }
-    e2e {
-        java {
-            compileClasspath += main.output + test.output
-            runtimeClasspath += main.output + test.output
-            srcDir "${projectDir}/src/e2e/java"
-        }
-        resources{
-            srcDir "${projectDir}/src/e2e/resources"
-        }
+  }
+  e2e {
+    java {
+      compileClasspath += main.output + test.output
+      runtimeClasspath += main.output + test.output
+      srcDir "${projectDir}/src/e2e/java"
     }
+    resources{
+      srcDir "${projectDir}/src/e2e/resources"
+    }
+  }
 }
 
 configurations {
-    e2eImplementation.extendsFrom testImplementation
-    e2eRuntime.extendsFrom testRuntime
+  e2eImplementation.extendsFrom testImplementation
+  e2eRuntime.extendsFrom testRuntime
 }
 
 idea {
-    module {
-        testSources.from(sourceSets.e2e.java.srcDirs)
-        testResources.from(sourceSets.e2e.resources.srcDirs)
-    }
+  module {
+    testSources.from(sourceSets.e2e.java.srcDirs)
+    testResources.from(sourceSets.e2e.resources.srcDirs)
+  }
 }
 
 dependencies {
-    implementation "com.google.guava:guava:${guavaVersion}"
+  implementation "com.google.guava:guava:${guavaVersion}"
 
-    implementation "info.picocli:picocli:${picocliVersion}"
-    annotationProcessor "info.picocli:picocli-codegen:${picocliVersion}"
+  implementation "info.picocli:picocli:${picocliVersion}"
+  annotationProcessor "info.picocli:picocli-codegen:${picocliVersion}"
 
-    implementation platform("com.fasterxml.jackson:jackson-bom:${jacksonVersion}")
-    implementation "com.fasterxml.jackson.core:jackson-core"
-    implementation "com.fasterxml.jackson.core:jackson-databind"
-    implementation "com.fasterxml.jackson.core:jackson-annotations"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-csv"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
+  implementation platform("com.fasterxml.jackson:jackson-bom:${jacksonVersion}")
+  implementation "com.fasterxml.jackson.core:jackson-core"
+  implementation "com.fasterxml.jackson.core:jackson-databind"
+  implementation "com.fasterxml.jackson.core:jackson-annotations"
+  implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-csv"
+  implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties"
+  implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml"
+  implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
 
-    testImplementation platform("org.junit:junit-bom:${junitVersion}")
-    testImplementation "org.junit.jupiter:junit-jupiter"
-    testImplementation "org.junit.jupiter:junit-jupiter-params"
-    testImplementation "org.assertj:assertj-core:${assertjVersion}"
+  testImplementation platform("org.junit:junit-bom:${junitVersion}")
+  testImplementation "org.junit.jupiter:junit-jupiter"
+  testImplementation "org.junit.jupiter:junit-jupiter-params"
+  testImplementation "org.assertj:assertj-core:${assertjVersion}"
 
-    e2eImplementation platform("io.cucumber:cucumber-bom:${cucumberVersion}")
-    e2eImplementation "io.cucumber:cucumber-java"
-    e2eImplementation "io.cucumber:cucumber-junit-platform-engine"
-    e2eImplementation "org.junit.platform:junit-platform-suite"
+  e2eImplementation platform("io.cucumber:cucumber-bom:${cucumberVersion}")
+  e2eImplementation "io.cucumber:cucumber-java"
+  e2eImplementation "io.cucumber:cucumber-junit-platform-engine"
+  e2eImplementation "org.junit.platform:junit-platform-suite"
 
-    errorprone "com.google.errorprone:error_prone_core:${errorProneVersion}"
-    errorprone "tech.picnic.error-prone-support:error-prone-contrib:${errorProneSupportVersion}"
-    errorprone "tech.picnic.error-prone-support:refaster-runner:${errorProneSupportVersion}"
+  errorprone "com.google.errorprone:error_prone_core:${errorProneVersion}"
+  errorprone "tech.picnic.error-prone-support:error-prone-contrib:${errorProneSupportVersion}"
+  errorprone "tech.picnic.error-prone-support:refaster-runner:${errorProneSupportVersion}"
 }
 
 application {
-    mainClass = "dev.gokhun.convert.Convert"
-    sourceCompatibility = JavaVersion.VERSION_19
-    targetCompatibility = JavaVersion.VERSION_19
+  mainClass = "dev.gokhun.convert.Convert"
+  sourceCompatibility = JavaVersion.VERSION_19
+  targetCompatibility = JavaVersion.VERSION_19
 }
 
 tasks.register("generateVersionProvider") {
-    group = taskGroup
-    doFirst {
-        def versionProvider = file("${generatedSources}/dev/gokhun/convert/VersionProvider.java")
-        versionProvider.parentFile.mkdirs()
-        versionProvider.text =
-                """
+  group = taskGroup
+  doFirst {
+    def versionProvider = file("${generatedSources}/dev/gokhun/convert/VersionProvider.java")
+    versionProvider.parentFile.mkdirs()
+    versionProvider.text =
+        """
 package dev.gokhun.convert;
 
 final class VersionProvider implements picocli.CommandLine.IVersionProvider {
@@ -103,104 +103,105 @@ final class VersionProvider implements picocli.CommandLine.IVersionProvider {
     }
 }
 """
-    }
+  }
 }
 
 tasks.register("copyBinaries", Copy) {
-    group = taskGroup
-    mustRunAfter("nativeCompile")
+  group = taskGroup
+  mustRunAfter("nativeCompile")
 
-    def binDir = file("${buildDir}/native/${archiveName}/bin/")
-    binDir.parentFile.mkdirs()
+  def binDir = file("${buildDir}/native/${archiveName}/bin/")
+  binDir.parentFile.mkdirs()
 
-    from "${buildDir}/native/nativeCompile/convert"
-    into binDir
+  from "${buildDir}/native/nativeCompile/convert"
+  into binDir
 }
 
 tasks.withType(Copy).configureEach {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.register("generatePackage", Zip) {
-    group = taskGroup
-    dependsOn("copyBinaries")
+  group = taskGroup
+  dependsOn("copyBinaries")
 
-    archiveFileName = "${archiveName}.zip"
-    destinationDirectory = layout.buildDirectory.dir("dist")
+  archiveFileName = "${archiveName}.zip"
+  destinationDirectory = layout.buildDirectory.dir("dist")
 
-    from layout.buildDirectory.dir("native")
-    include "${archiveName}/**"
+  from layout.buildDirectory.dir("native")
+  include "${archiveName}/**"
 }
 
 tasks.withType(JavaCompile).configureEach {
-    dependsOn("generateVersionProvider")
-    options.compilerArgs += [
-        "-Aproject=${project.group}/${project.name}",
-        "-Werror"
-    ]
-    options.errorprone.disableWarningsInGeneratedCode = true
+  dependsOn("generateVersionProvider")
+  options.compilerArgs += [
+    "-Aproject=${project.group}/${project.name}",
+    "-Werror"
+  ]
+  options.errorprone.disableWarningsInGeneratedCode = true
 }
 
 test {
-    useJUnitPlatform()
+  useJUnitPlatform()
 }
 
 tasks.register("e2e", Test) {
-    group = taskGroup
-    systemProperty("cucumber.junit-platform.naming-strategy", "long")
-    useJUnitPlatform()
-    testClassesDirs = sourceSets.e2e.output.classesDirs
-    classpath = sourceSets.e2e.runtimeClasspath
+  group = taskGroup
+  systemProperty("cucumber.junit-platform.naming-strategy", "long")
+  useJUnitPlatform()
+  testClassesDirs = sourceSets.e2e.output.classesDirs
+  classpath = sourceSets.e2e.runtimeClasspath
 }
 
 checkstyle {
-    configFile file("${project.rootDir}/checkstyle.xml")
-    checkstyleMain.source = "src/main/java"
-    checkstyleTest.source = "src/test/java"
-    checkstyleE2e.source "src/e2e/java"
+  configFile file("${project.rootDir}/checkstyle.xml")
+  checkstyleMain.source = "src/main/java"
+  checkstyleTest.source = "src/test/java"
+  checkstyleE2e.source "src/e2e/java"
 }
 
 spotless {
-    java {
-        importOrder()
-        cleanthat()
-        palantirJavaFormat()
-        formatAnnotations()
-        target "src/*/java/**/*.java"
-    }
-    groovyGradle {
-        target "*.gradle"
-        greclipse()
-        trimTrailingWhitespace()
-        indentWithSpaces()
-        endWithNewline()
-    }
-    gherkin {
-        target "src/*/resources/**/*.feature"
-        gherkinUtils()
-    }
-    format "misc", {
-        target "*.md", ".gitignore", ".gitattributes"
-        trimTrailingWhitespace()
-        indentWithSpaces()
-        endWithNewline()
-    }
+  java {
+    target "src/*/java/**/*.java"
+    importOrder()
+    removeUnusedImports()
+    cleanthat()
+    palantirJavaFormat().style("GOOGLE")
+    formatAnnotations()
+  }
+  groovyGradle {
+    target "*.gradle"
+    greclipse()
+    trimTrailingWhitespace()
+    indentWithSpaces(2)
+    endWithNewline()
+  }
+  gherkin {
+    target "src/*/resources/**/*.feature"
+    gherkinUtils()
+  }
+  format "misc", {
+    target "*.md", ".gitignore", ".gitattributes"
+    trimTrailingWhitespace()
+    indentWithSpaces(2)
+    endWithNewline()
+  }
 }
 
 graalvmNative {
-    binaries.configureEach {
-        resources.autodetect()
-        if (os.isLinux()) {
-            if (arch == "amd64") {
-                buildArgs.add("--static")
-                buildArgs.add("--libc=musl")
-            } else {
-                buildArgs.add("-H:+StaticExecutableWithDynamicLibC")
-            }
-        }
-        buildArgs.add("-H:IncludeLocales=en")
-        buildArgs.add("-H:Optimize=2")
-        buildArgs.add("-H:+RemoveUnusedSymbols")
+  binaries.configureEach {
+    resources.autodetect()
+    if (os.isLinux()) {
+      if (arch == "amd64") {
+        buildArgs.add("--static")
+        buildArgs.add("--libc=musl")
+      } else {
+        buildArgs.add("-H:+StaticExecutableWithDynamicLibC")
+      }
     }
-    toolchainDetection = false
+    buildArgs.add("-H:IncludeLocales=en")
+    buildArgs.add("-H:Optimize=2")
+    buildArgs.add("-H:+RemoveUnusedSymbols")
+  }
+  toolchainDetection = false
 }

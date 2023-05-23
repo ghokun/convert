@@ -9,8 +9,8 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public final class HelpSteps {
-    private static final String HELP_OUTPUT =
-            """
+  private static final String HELP_OUTPUT =
+      """
 Usage: convert [-hV] [--deduplicate-keys] [--indent-yaml] [--minimize-yaml-quotes] [--pretty] -f=<input> -o=<output>
                [-s=<csvSeparator>]
 Converts one file type to another.
@@ -29,28 +29,29 @@ Converts one file type to another.
       --deduplicate-keys   Think csv but as json. Only available on conversions where the initial source is array. Keys
                              are arrays and values are arrays of arrays.
             """;
-    private ProcessResult result;
+  private ProcessResult result;
 
-    @When("convert is run without arguments")
-    public void convertIsRunWithoutArguments() {
-        result = runCommand("convert");
-    }
+  @When("convert is run without arguments")
+  public void convertIsRunWithoutArguments() {
+    result = runCommand("convert");
+  }
 
-    @When("convert is run with -h option")
-    public void convertIsRunWithHOption() {
-        result = runCommand("convert", "-h");
-    }
+  @When("convert is run with -h option")
+  public void convertIsRunWithHOption() {
+    result = runCommand("convert", "-h");
+  }
 
-    @Then("missing options are shown")
-    public void missingOptionsAreShown() {
-        assertThat(result.exitCode()).isEqualTo(2);
-        assertThat(result.output()).isNotEmpty();
-        assertThat(result.output())
-                .containsIgnoringNewLines("Missing required options: '--input=<input>', '--output=<output>'");
-    }
+  @Then("missing options are shown")
+  public void missingOptionsAreShown() {
+    assertThat(result.exitCode()).isEqualTo(2);
+    assertThat(result.output()).isNotEmpty();
+    assertThat(result.output())
+        .containsIgnoringNewLines(
+            "Missing required options: '--input=<input>', '--output=<output>'");
+  }
 
-    @And("help output is shown")
-    public void helpOutputIsShown() {
-        assertThat(result.output()).containsIgnoringNewLines(HELP_OUTPUT);
-    }
+  @And("help output is shown")
+  public void helpOutputIsShown() {
+    assertThat(result.output()).containsIgnoringNewLines(HELP_OUTPUT);
+  }
 }

@@ -10,39 +10,40 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 final class ProcessHelper {
-    static final String RESOURCES_DIR = "./src/e2e/resources/dev/gokhun/convert";
+  static final String RESOURCES_DIR = "./src/e2e/resources/dev/gokhun/convert";
 
-    private ProcessHelper() {}
+  private ProcessHelper() {}
 
-    static ProcessResult runCommand(String command, String... args) {
-        ProcessBuilder processBuilder = new ProcessBuilder()
-                .redirectErrorStream(true)
-                .command(ImmutableList.<String>builder().add(command).add(args).build())
-                .directory(new File(RESOURCES_DIR));
-        try {
-            Process process = processBuilder.start();
-            return new ProcessResult(process.waitFor(), clearAnsiFormatting(readOutput(process.getInputStream())));
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+  static ProcessResult runCommand(String command, String... args) {
+    ProcessBuilder processBuilder = new ProcessBuilder()
+        .redirectErrorStream(true)
+        .command(ImmutableList.<String>builder().add(command).add(args).build())
+        .directory(new File(RESOURCES_DIR));
+    try {
+      Process process = processBuilder.start();
+      return new ProcessResult(
+          process.waitFor(), clearAnsiFormatting(readOutput(process.getInputStream())));
+    } catch (IOException | InterruptedException e) {
+      throw new RuntimeException(e);
     }
+  }
 
-    record ProcessResult(int exitCode, String output) {}
+  record ProcessResult(int exitCode, String output) {}
 
-    private static String readOutput(InputStream inputStream) {
-        StringBuilder sb = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, UTF_8))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append(System.lineSeparator());
-            }
-            return sb.toString();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+  private static String readOutput(InputStream inputStream) {
+    StringBuilder sb = new StringBuilder();
+    try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, UTF_8))) {
+      String line;
+      while ((line = br.readLine()) != null) {
+        sb.append(line).append(System.lineSeparator());
+      }
+      return sb.toString();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
+  }
 
-    private static String clearAnsiFormatting(String coloredText) {
-        return coloredText.replaceAll("\\e\\[[\\d;]*[^\\d;]", "");
-    }
+  private static String clearAnsiFormatting(String coloredText) {
+    return coloredText.replaceAll("\\e\\[[\\d;]*[^\\d;]", "");
+  }
 }

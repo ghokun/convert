@@ -51,8 +51,5 @@ jobs:
             ./build/native/nativeCompile/convert
           args: --best
 
-      - name: 'Add convert to PATH'
-        run: cp ${{ github.workspace }}/build/native/nativeCompile/convert /usr/local/bin/convert
-
       - name: 'End to end test'
-        run: ./gradlew e2e --no-daemon
+        run: PATH=$PATH:${{ github.workspace }}/build/native/nativeCompile/convert ./gradlew e2e --no-daemon

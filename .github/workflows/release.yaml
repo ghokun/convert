@@ -50,8 +50,11 @@ jobs:
             ./build/native/nativeCompile/convert${{ matrix.suffix }}
           args: --best
 
+      - name: 'Add convert to PATH'
+        run: echo "${{ github.workspace }}/build/native/nativeCompile" >> $GITHUB_PATH
+
       - name: 'End to end test'
-        run: PATH=$PATH:${{ github.workspace }}/build/native/nativeCompile/convert ./gradlew e2e --no-daemon
+        run: ./gradlew e2e --no-daemon
 
       - name: 'Generate package'
         run: ./gradlew generatePackage -Pversion='${{ github.event.inputs.version }}' --no-daemon

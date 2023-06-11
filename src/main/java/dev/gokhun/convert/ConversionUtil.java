@@ -1,5 +1,10 @@
 package dev.gokhun.convert;
 
+import static com.fasterxml.jackson.databind.MapperFeature.SORT_PROPERTIES_ALPHABETICALLY;
+import static com.fasterxml.jackson.dataformat.csv.CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS;
+import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.INDENT_ARRAYS;
+import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR;
+import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.MINIMIZE_QUOTES;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.io.Files.getFileExtension;
 import static dev.gokhun.convert.ConversionUtil.FileType.fromFileExtension;
@@ -9,7 +14,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -18,7 +22,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.fasterxml.jackson.dataformat.toml.TomlMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -43,7 +46,7 @@ final class ConversionUtil {
 
   enum FileType {
     CSV(ImmutableSet.of("csv")) {
-      private static final CsvMapper mapper = new CsvMapper();
+      private static final CsvMapper mapper = new CsvMapper().enable(ALWAYS_QUOTE_STRINGS);
       private static final CsvSchema schema = CsvSchema.emptySchema().withHeader();
 
       @Override
@@ -78,6 +81,43 @@ final class ConversionUtil {
         };
       }
     },
+    TSV(ImmutableSet.of("tsv")) {
+      private static final CsvMapper mapper = new CsvMapper().enable(ALWAYS_QUOTE_STRINGS);
+      private static final CsvSchema schema = CsvSchema.emptySchema().withHeader();
+      private static final char HORIZONTAL_TABULATION = '\t';
+
+      @Override
+      Reader reader(ConversionOptions options) {
+        return file -> {
+          var it = mapper
+              .readerFor(new TypeReference<LinkedHashMap<String, String>>() {})
+              .with(schema.withColumnSeparator(HORIZONTAL_TABULATION))
+              .readValues(file);
+          var factory = JsonNodeFactory.instance;
+          var result = factory.arrayNode();
+          while (it.hasNextValue()) {
+            result.add(mapper.convertValue(it.next(), JsonNode.class));
+          }
+          return result;
+        };
+      }
+
+      @Override
+      Writer writer(ConversionOptions options) {
+        return (file, jsonNode) -> {
+          var csvSchemaBuilder = CsvSchema.builder();
+          var firstObject = jsonNode instanceof ArrayNode ? jsonNode.elements().next() : jsonNode;
+          firstObject.fieldNames().forEachRemaining(csvSchemaBuilder::addColumn);
+          mapper
+              .writerFor(JsonNode.class)
+              .with(csvSchemaBuilder
+                  .build()
+                  .withColumnSeparator(HORIZONTAL_TABULATION)
+                  .withHeader())
+              .writeValue(file, jsonNode);
+        };
+      }
+    },
     JSON(ImmutableSet.of("json")) {
       private static final JsonMapper mapper = new JsonMapper();
 
@@ -96,7 +136,7 @@ final class ConversionUtil {
     },
     PROPERTIES(ImmutableSet.of("properties")) {
       private static final JavaPropsMapper mapper = JavaPropsMapper.builder()
-          .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
+          .configure(SORT_PROPERTIES_ALPHABETICALLY, true)
           .build();
 
       @Override
@@ -134,9 +174,9 @@ final class ConversionUtil {
       @Override
       Writer writer(ConversionOptions options) {
         return (file, jsonNode) -> mapper
-            .configure(YAMLGenerator.Feature.INDENT_ARRAYS, options.indentYaml())
-            .configure(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR, options.indentYaml())
-            .configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, options.minimizeYamlQuotes())
+            .configure(INDENT_ARRAYS, options.indentYaml())
+            .configure(INDENT_ARRAYS_WITH_INDICATOR, options.indentYaml())
+            .configure(MINIMIZE_QUOTES, options.minimizeYamlQuotes())
             .writeValue(file, jsonNode);
       }
     };

@@ -265,12 +265,49 @@ Converts one file type to another.
           .hasSameTextualContentAs(new File(getTestResourcePath(expected)));
     }
 
+    @DisplayName("Should convert tsv correctly")
+    @MethodSource("tsvProvider")
+    @ParameterizedTest
+    void tsv1(String input, String output, String expected, boolean dedup) {
+      var outputPath = outputDirectory.getAbsolutePath() + output;
+      var systemManager = new MockSystemManager();
+      var args = ImmutableList.<String>builder()
+          .add("-i", getTestResourcePath(input), "-o", outputPath, "--pretty");
+      if (dedup) {
+        args.add("--deduplicate-keys");
+      }
+      systemManager.exit(new CommandLine(new Convert())
+          .setOut(systemManager.getOut())
+          .setErr(systemManager.getErr())
+          .setExecutionExceptionHandler(exceptionHandler)
+          .execute(args.build().toArray(String[]::new)));
+
+      assertThat(systemManager.getOutput()).isEmpty();
+      assertThat(systemManager.getError()).isEmpty();
+      assertThat(systemManager.getExitStatus()).isEqualTo(OK);
+      assertThat(new File(outputPath))
+          .hasSameTextualContentAs(new File(getTestResourcePath(expected)));
+    }
+
     private static Stream<Arguments> csvProvider() {
-      return ImmutableMap.of("json/oscars.json", false, "json/oscars-dedup.json", true)
+      return ImmutableMap.of(
+              "json/oscars.json", false, "json/oscars-dedup.json", true, "tsv/oscars.tsv", false)
           .entrySet()
           .stream()
           .map(output -> arguments(
               "csv/oscars.csv",
+              "/actual." + getFileExtension(output.getKey()),
+              output.getKey(),
+              output.getValue()));
+    }
+
+    private static Stream<Arguments> tsvProvider() {
+      return ImmutableMap.of(
+              "json/oscars.json", false, "json/oscars-dedup.json", true, "csv/oscars.csv", false)
+          .entrySet()
+          .stream()
+          .map(output -> arguments(
+              "tsv/oscars.tsv",
               "/actual." + getFileExtension(output.getKey()),
               output.getKey(),
               output.getValue()));

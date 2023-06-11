@@ -17,6 +17,7 @@ import java.nio.file.Path;
 public final class ConversionSteps {
   private static final String INPUT = "--input";
   private static final String OUTPUT = "--output";
+  private static final String ARGS = "args";
   private static final String ACTUAL = "actual";
   private static final String EXPECTED = "expected";
   private File tempDir;
@@ -32,8 +33,8 @@ public final class ConversionSteps {
   public void convertIsRunWithGivenInputAndOutputArguments(DataTable dataTable) {
     dataTable.asMaps().forEach(row -> {
       File outputFile = getFile(tempDir.getAbsolutePath(), row.get(OUTPUT));
-      ProcessResult result =
-          runCommand("convert", INPUT, row.get(INPUT), OUTPUT, outputFile.getAbsolutePath());
+      ProcessResult result = runCommand(
+          "convert", INPUT, row.get(INPUT), OUTPUT, outputFile.getAbsolutePath(), row.get(ARGS));
       assertThat(result.exitCode()).isEqualTo(0);
       assertThat(outputFile).exists().isFile();
     });

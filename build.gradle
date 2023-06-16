@@ -83,8 +83,8 @@ dependencies {
 
 application {
   mainClass = "dev.gokhun.convert.Convert"
-  sourceCompatibility = JavaVersion.VERSION_19
-  targetCompatibility = JavaVersion.VERSION_19
+  sourceCompatibility = JavaVersion.VERSION_20
+  targetCompatibility = JavaVersion.VERSION_20
 }
 
 tasks.register("generateVersionProvider") {
@@ -199,6 +199,7 @@ graalvmNative {
         buildArgs.add("-H:+StaticExecutableWithDynamicLibC")
       }
     }
+    buildArgs.add("--gc=G1")
     buildArgs.add("-H:IncludeLocales=en")
     buildArgs.add("-H:Optimize=2")
     buildArgs.add("-H:+RemoveUnusedSymbols")

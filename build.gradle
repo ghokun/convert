@@ -200,9 +200,11 @@ graalvmNative {
         buildArgs.add("-H:+StaticExecutableWithDynamicLibC")
       }
     }
+    buildArgs.add("-march=native")
     buildArgs.add("-H:IncludeLocales=en")
     buildArgs.add("-H:Optimize=2")
     buildArgs.add("-H:+RemoveUnusedSymbols")
+    buildArgs.add("-H:+BuildReport")
   }
   toolchainDetection = false
 }

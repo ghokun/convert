@@ -195,7 +195,6 @@ graalvmNative {
       if (arch == "amd64") {
         buildArgs.add("--static")
         buildArgs.add("--libc=musl")
-        buildArgs.add("--gc=G1")
       } else {
         buildArgs.add("-H:+StaticExecutableWithDynamicLibC")
       }

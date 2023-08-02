@@ -216,6 +216,7 @@ graalvmNative {
     buildArgs.add("-H:IncludeLocales=en")
     buildArgs.add("-H:Optimize=2")
     buildArgs.add("-H:+RemoveUnusedSymbols")
+    buildArgs.add("--initialize-at-build-time=org.junit.jupiter.engine.config.InstantiatingConfigurationParameterConverter,org.junit.platform.launcher.core.LauncherConfig")
   }
   metadataRepository {
     enabled = true

@@ -189,6 +189,19 @@ spotless {
 }
 
 graalvmNative {
+  agent {
+    defaultMode = "standard"
+    enabled = true
+    modes {
+      standard {}
+    }
+
+    builtinCallerFilter = true
+    builtinHeuristicFilter = true
+    enableExperimentalPredefinedClasses = false
+    enableExperimentalUnsafeAllocationTracing = false
+    trackReflectionMetadata = true
+  }
   binaries.configureEach {
     resources.autodetect()
     if (os.isLinux()) {
@@ -203,6 +216,9 @@ graalvmNative {
     buildArgs.add("-H:IncludeLocales=en")
     buildArgs.add("-H:Optimize=2")
     buildArgs.add("-H:+RemoveUnusedSymbols")
+  }
+  metadataRepository {
+    enabled = true
   }
   toolchainDetection = false
 }

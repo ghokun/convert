@@ -7,7 +7,7 @@ on:
   pull_request:
 
 env:
-  JAVA_VERSION: '20'
+  JAVA_VERSION: '21'
 
 jobs:
   build:
@@ -27,7 +27,6 @@ jobs:
         with:
           distribution: 'graalvm-community'
           java-version: ${{ env.JAVA_VERSION }}
-          components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
           native-image-musl: ${{ matrix.os == 'ubuntu-latest' }}

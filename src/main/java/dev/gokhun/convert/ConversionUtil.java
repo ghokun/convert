@@ -273,7 +273,7 @@ final class ConversionUtil {
       var values = deduplicated.putArray("values");
       while (it.hasNext()) {
         var next = it.next();
-        if (keys.size() == 0) {
+        if (keys.isEmpty()) {
           keys.addAll(ImmutableList.copyOf(next.fieldNames()).stream()
               .map(TextNode::valueOf)
               .toList());

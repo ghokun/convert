@@ -58,7 +58,7 @@ jobs:
         run: ./gradlew generatePackage -Pversion='${{ github.event.inputs.version }}' --no-daemon
 
       - name: 'Upload build artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: artifacts
           path: build/**/*.zip

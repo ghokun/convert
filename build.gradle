@@ -14,7 +14,8 @@ repositories {
 
 group = "dev.gokhun"
 
-def generatedSources = "${buildDir}/generated"
+def buildDirectory = layout.buildDirectory.getAsFile().get()
+def generatedSources = "${buildDirectory}/generated"
 def taskGroup = "convert"
 def os = org.gradle.internal.os.OperatingSystem.current()
 def osName = os.isMacOsX() ? os.getNativePrefix() : os.getFamilyName()
@@ -83,6 +84,9 @@ dependencies {
 
 application {
   mainClass = "dev.gokhun.convert.Convert"
+}
+
+java {
   sourceCompatibility = JavaVersion.VERSION_21
   targetCompatibility = JavaVersion.VERSION_21
 }
@@ -110,10 +114,10 @@ tasks.register("copyBinaries", Copy) {
   group = taskGroup
   mustRunAfter("nativeCompile")
 
-  def binDir = file("${buildDir}/native/${archiveName}/bin/")
+  def binDir = file("${buildDirectory}/native/${archiveName}/bin/")
   binDir.parentFile.mkdirs()
 
-  from "${buildDir}/native/nativeCompile/convert"
+  from "${buildDirectory}/native/nativeCompile/convert"
   into binDir
 }
 

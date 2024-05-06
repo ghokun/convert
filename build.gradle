@@ -170,7 +170,7 @@ spotless {
     importOrder()
     removeUnusedImports()
     cleanthat()
-    palantirJavaFormat("2.35.0").style("GOOGLE")
+    palantirJavaFormat().style("GOOGLE").formatJavadoc(true)
     formatAnnotations()
   }
   groovyGradle {

@@ -6,8 +6,8 @@ project:
   authors:
     - ghokun
   license: Apache-2.0
-  inceptionYear: 2023
-  stereotype: cli
+  inceptionYear: '2023'
+  stereotype: CLI
 
 release:
   github:
@@ -22,8 +22,6 @@ distributions:
         platform: "osx-aarch_64"
       - path: "artifacts/dist/{{distributionName}}-{{projectVersion}}-linux-x86_64.zip"
         platform: "linux-x86_64"
-      - path: "artifacts/dist/{{distributionName}}-{{projectVersion}}-linux-aarch64.zip"
-        platform: "linux-aarch_64"
     brew:
       active: RELEASE
       formulaName: convert

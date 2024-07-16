@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ ubuntu-latest, macOS-latest, macOS-arm64, linux-arm64 ]
+        os: [ ubuntu-latest, macos-latest, macos-13 ]
 
     steps:
       - name: 'Check out repository'

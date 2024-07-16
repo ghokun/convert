@@ -16,11 +16,11 @@ release:
 distributions:
   convert:
     artifacts:
-      - path: "artifacts/dist/{{distributionName}}-{{projectVersion}}-darwin-x86_64.zip"
+      - path: "artifacts-macos-13/dist/{{distributionName}}-{{projectVersion}}-darwin-x86_64.zip"
         platform: "osx-x86_64"
-      - path: "artifacts/dist/{{distributionName}}-{{projectVersion}}-darwin-aarch64.zip"
+      - path: "artifacts-macos-latest/dist/{{distributionName}}-{{projectVersion}}-darwin-aarch64.zip"
         platform: "osx-aarch_64"
-      - path: "artifacts/dist/{{distributionName}}-{{projectVersion}}-linux-x86_64.zip"
+      - path: "artifacts-ubuntu-latest/dist/{{distributionName}}-{{projectVersion}}-linux-x86_64.zip"
         platform: "linux-x86_64"
     brew:
       active: RELEASE

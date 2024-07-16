@@ -45,7 +45,7 @@ jobs:
         with:
           version: latest
           files: |
-            ./build/native/nativeCompile/convert${{ matrix.suffix }}
+            ./build/native/nativeCompile/convert
           args: --best
 
       - name: 'Add convert to PATH'
@@ -60,7 +60,7 @@ jobs:
       - name: 'Upload build artifact'
         uses: actions/upload-artifact@v4
         with:
-          name: artifacts
+          name: artifacts-'${{ matrix.os }}'
           path: build/**/*.zip
 
   release:

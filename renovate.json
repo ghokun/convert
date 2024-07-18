@@ -3,7 +3,7 @@
   "extends": [
     "config:base"
   ],
-  "automergeStrategy": "merge-commit",
+  "automergeStrategy": "squash",
   "packageRules": [
     {
       "description": "Automerge non-major updates",

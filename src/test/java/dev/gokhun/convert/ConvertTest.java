@@ -29,7 +29,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.IExecutionExceptionHandler;
 
 final class ConvertTest {
-  private static final IExecutionExceptionHandler exceptionHandler =
+  private static final IExecutionExceptionHandler EXCEPTION_HANDLER =
       new ExecutionExceptionHandler();
   private static final String SEMVER_REGEX =
       "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$";
@@ -41,7 +41,7 @@ final class ConvertTest {
     systemManager.exit(new CommandLine(new Convert())
         .setOut(systemManager.getOut())
         .setErr(systemManager.getErr())
-        .setExecutionExceptionHandler(exceptionHandler)
+        .setExecutionExceptionHandler(EXCEPTION_HANDLER)
         .execute("-V"));
 
     assertThat(systemManager.getExitStatus()).isEqualTo(OK);
@@ -56,7 +56,7 @@ final class ConvertTest {
     systemManager.exit(new CommandLine(new Convert())
         .setOut(systemManager.getOut())
         .setErr(systemManager.getErr())
-        .setExecutionExceptionHandler(exceptionHandler)
+        .setExecutionExceptionHandler(EXCEPTION_HANDLER)
         .execute());
 
     assertThat(systemManager.getExitStatus()).isEqualTo(USAGE);
@@ -106,7 +106,7 @@ Converts one file type to another.
       systemManager.exit(new CommandLine(new Convert())
           .setOut(systemManager.getOut())
           .setErr(systemManager.getErr())
-          .setExecutionExceptionHandler(exceptionHandler)
+          .setExecutionExceptionHandler(EXCEPTION_HANDLER)
           .execute("-i", getTestResourcePath(input), "-o", outputPath));
 
       assertThat(systemManager.getOutput()).isEmpty();
@@ -170,7 +170,7 @@ Converts one file type to another.
       systemManager.exit(new CommandLine(new Convert())
           .setOut(systemManager.getOut())
           .setErr(systemManager.getErr())
-          .setExecutionExceptionHandler(exceptionHandler)
+          .setExecutionExceptionHandler(EXCEPTION_HANDLER)
           .execute("-i", input, "-o", output, "--pretty"));
 
       assertThat(systemManager.getExitStatus()).isEqualTo(OK);
@@ -188,7 +188,7 @@ Converts one file type to another.
       systemManager.exit(new CommandLine(new Convert())
           .setOut(systemManager.getOut())
           .setErr(systemManager.getErr())
-          .setExecutionExceptionHandler(exceptionHandler)
+          .setExecutionExceptionHandler(EXCEPTION_HANDLER)
           .execute("-i", input, "-o", output));
 
       assertThat(systemManager.getExitStatus()).isEqualTo(OK);
@@ -211,7 +211,7 @@ Converts one file type to another.
       systemManager.exit(new CommandLine(new Convert())
           .setOut(systemManager.getOut())
           .setErr(systemManager.getErr())
-          .setExecutionExceptionHandler(exceptionHandler)
+          .setExecutionExceptionHandler(EXCEPTION_HANDLER)
           .execute(
               "-i",
               getTestResourcePath(input),
@@ -255,7 +255,7 @@ Converts one file type to another.
       systemManager.exit(new CommandLine(new Convert())
           .setOut(systemManager.getOut())
           .setErr(systemManager.getErr())
-          .setExecutionExceptionHandler(exceptionHandler)
+          .setExecutionExceptionHandler(EXCEPTION_HANDLER)
           .execute(args.build().toArray(String[]::new)));
 
       assertThat(systemManager.getOutput()).isEmpty();
@@ -279,7 +279,7 @@ Converts one file type to another.
       systemManager.exit(new CommandLine(new Convert())
           .setOut(systemManager.getOut())
           .setErr(systemManager.getErr())
-          .setExecutionExceptionHandler(exceptionHandler)
+          .setExecutionExceptionHandler(EXCEPTION_HANDLER)
           .execute(args.build().toArray(String[]::new)));
 
       assertThat(systemManager.getOutput()).isEmpty();

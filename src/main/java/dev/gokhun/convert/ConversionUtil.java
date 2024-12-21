@@ -46,20 +46,20 @@ final class ConversionUtil {
 
   enum FileType {
     CSV(ImmutableSet.of("csv")) {
-      private static final CsvMapper mapper = new CsvMapper().enable(ALWAYS_QUOTE_STRINGS);
-      private static final CsvSchema schema = CsvSchema.emptySchema().withHeader();
+      private static final CsvMapper MAPPER = new CsvMapper().enable(ALWAYS_QUOTE_STRINGS);
+      private static final CsvSchema CSV_SCHEMA = CsvSchema.emptySchema().withHeader();
 
       @Override
       Reader reader(ConversionOptions options) {
         return file -> {
-          var it = mapper
+          var it = MAPPER
               .readerFor(new TypeReference<LinkedHashMap<String, String>>() {})
-              .with(schema.withColumnSeparator(options.csvSeparator()))
+              .with(CSV_SCHEMA.withColumnSeparator(options.csvSeparator()))
               .readValues(file);
           var factory = JsonNodeFactory.instance;
           var result = factory.arrayNode();
           while (it.hasNextValue()) {
-            result.add(mapper.convertValue(it.next(), JsonNode.class));
+            result.add(MAPPER.convertValue(it.next(), JsonNode.class));
           }
           return result;
         };
@@ -71,7 +71,7 @@ final class ConversionUtil {
           var csvSchemaBuilder = CsvSchema.builder();
           var firstObject = jsonNode instanceof ArrayNode ? jsonNode.elements().next() : jsonNode;
           firstObject.fieldNames().forEachRemaining(csvSchemaBuilder::addColumn);
-          mapper
+          MAPPER
               .writerFor(JsonNode.class)
               .with(csvSchemaBuilder
                   .build()
@@ -82,21 +82,21 @@ final class ConversionUtil {
       }
     },
     TSV(ImmutableSet.of("tsv")) {
-      private static final CsvMapper mapper = new CsvMapper().enable(ALWAYS_QUOTE_STRINGS);
-      private static final CsvSchema schema = CsvSchema.emptySchema().withHeader();
+      private static final CsvMapper MAPPER = new CsvMapper().enable(ALWAYS_QUOTE_STRINGS);
+      private static final CsvSchema CSV_SCHEMA = CsvSchema.emptySchema().withHeader();
       private static final char HORIZONTAL_TABULATION = '\t';
 
       @Override
       Reader reader(ConversionOptions options) {
         return file -> {
-          var it = mapper
+          var it = MAPPER
               .readerFor(new TypeReference<LinkedHashMap<String, String>>() {})
-              .with(schema.withColumnSeparator(HORIZONTAL_TABULATION))
+              .with(CSV_SCHEMA.withColumnSeparator(HORIZONTAL_TABULATION))
               .readValues(file);
           var factory = JsonNodeFactory.instance;
           var result = factory.arrayNode();
           while (it.hasNextValue()) {
-            result.add(mapper.convertValue(it.next(), JsonNode.class));
+            result.add(MAPPER.convertValue(it.next(), JsonNode.class));
           }
           return result;
         };
@@ -108,7 +108,7 @@ final class ConversionUtil {
           var csvSchemaBuilder = CsvSchema.builder();
           var firstObject = jsonNode instanceof ArrayNode ? jsonNode.elements().next() : jsonNode;
           firstObject.fieldNames().forEachRemaining(csvSchemaBuilder::addColumn);
-          mapper
+          MAPPER
               .writerFor(JsonNode.class)
               .with(csvSchemaBuilder
                   .build()
@@ -119,61 +119,60 @@ final class ConversionUtil {
       }
     },
     JSON(ImmutableSet.of("json")) {
-      private static final JsonMapper mapper = new JsonMapper();
+      private static final JsonMapper MAPPER = new JsonMapper();
 
       @Override
       Reader reader(ConversionOptions options) {
-        return mapper::readTree;
+        return MAPPER::readTree;
       }
 
       @Override
       Writer writer(ConversionOptions options) {
         return (file, jsonNode) -> (options.pretty()
-                ? mapper.writerWithDefaultPrettyPrinter()
-                : mapper.writer())
+                ? MAPPER.writerWithDefaultPrettyPrinter()
+                : MAPPER.writer())
             .writeValue(file, jsonNode);
       }
     },
     PROPERTIES(ImmutableSet.of("properties")) {
-      private static final JavaPropsMapper mapper = JavaPropsMapper.builder()
+      private static final JavaPropsMapper MAPPER = JavaPropsMapper.builder()
           .configure(SORT_PROPERTIES_ALPHABETICALLY, true)
           .build();
 
       @Override
       Reader reader(ConversionOptions options) {
-        return mapper::readTree;
+        return MAPPER::readTree;
       }
 
       @Override
       Writer writer(ConversionOptions options) {
-        return mapper::writeValue;
+        return MAPPER::writeValue;
       }
     },
     TOML(ImmutableSet.of("toml")) {
-
-      private static final TomlMapper mapper = new TomlMapper();
+      private static final TomlMapper MAPPER = new TomlMapper();
 
       @Override
       Reader reader(ConversionOptions options) {
-        return mapper::readTree;
+        return MAPPER::readTree;
       }
 
       @Override
       Writer writer(ConversionOptions options) {
-        return mapper::writeValue;
+        return MAPPER::writeValue;
       }
     },
     YAML(ImmutableSet.of("yaml", "yml")) {
-      private static final YAMLMapper mapper = new YAMLMapper();
+      private static final YAMLMapper MAPPER = new YAMLMapper();
 
       @Override
       Reader reader(ConversionOptions options) {
-        return file -> mapper.valueToTree(new Yaml().load(new FileInputStream(file)));
+        return file -> MAPPER.valueToTree(new Yaml().load(new FileInputStream(file)));
       }
 
       @Override
       Writer writer(ConversionOptions options) {
-        return (file, jsonNode) -> mapper
+        return (file, jsonNode) -> MAPPER
             .configure(INDENT_ARRAYS, options.indentYaml())
             .configure(INDENT_ARRAYS_WITH_INDICATOR, options.indentYaml())
             .configure(MINIMIZE_QUOTES, options.minimizeYamlQuotes())

@@ -28,15 +28,15 @@ import picocli.CommandLine.ParseResult;
     usageHelpWidth = 120,
     versionProvider = VersionProvider.class)
 public final class Convert implements Callable<Integer> {
-  private static final SystemManager systemManager = new DefaultSystemManager();
-  private static final ColorScheme colorScheme = defaultColorScheme(ON);
-  private static final IExecutionExceptionHandler exceptionHandler =
+  private static final SystemManager SYSTEM_MANAGER = new DefaultSystemManager();
+  private static final ColorScheme COLOR_SCHEME = defaultColorScheme(ON);
+  private static final IExecutionExceptionHandler EXCEPTION_HANDLER =
       new ExecutionExceptionHandler();
-  private static final CommandLine cmd = new CommandLine(new Convert())
-      .setOut(systemManager.getOut())
-      .setErr(systemManager.getErr())
-      .setExecutionExceptionHandler(exceptionHandler)
-      .setColorScheme(colorScheme);
+  private static final CommandLine CMD = new CommandLine(new Convert())
+      .setOut(SYSTEM_MANAGER.getOut())
+      .setErr(SYSTEM_MANAGER.getErr())
+      .setExecutionExceptionHandler(EXCEPTION_HANDLER)
+      .setColorScheme(COLOR_SCHEME);
 
   @Option(
       names = {"--from", "--input", "-f", "-i"},
@@ -108,7 +108,7 @@ public final class Convert implements Callable<Integer> {
   }
 
   public static void main(String... args) {
-    systemManager.exit(cmd.execute(args));
+    SYSTEM_MANAGER.exit(CMD.execute(args));
   }
 
   interface SystemManager {

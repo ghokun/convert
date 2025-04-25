@@ -4,6 +4,11 @@
     "config:base"
   ],
   "automergeStrategy": "squash",
+  "groupName": "all dependencies",
+  "groupSlug": "all",
+  "lockFileMaintenance": {
+    "enabled": false
+  },
   "packageRules": [
     {
       "description": "Automerge non-major updates",
@@ -12,6 +17,14 @@
         "patch"
       ],
       "automerge": true
+    },
+    {
+      "groupName": "all dependencies",
+      "groupSlug": "all",
+      "matchPackageNames": [
+        "*"
+      ]
     }
-  ]
+  ],
+  "separateMajorMinor": false
 }

@@ -87,8 +87,10 @@ application {
 }
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_21
-  targetCompatibility = JavaVersion.VERSION_21
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(24)
+    nativeImageCapable = true
+  }
 }
 
 tasks.register("generateVersionProvider") {

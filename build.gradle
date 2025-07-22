@@ -222,10 +222,11 @@ graalvmNative {
       }
     }
     buildArgs.add("-march=native")
+    buildArgs.add("-H:+UnlockExperimentalVMOptions")
     buildArgs.add("-H:IncludeLocales=en")
     buildArgs.add("-H:Optimize=2")
     buildArgs.add("-H:+RemoveUnusedSymbols")
-    buildArgs.add("--initialize-at-build-time=org.junit.jupiter.engine.config.InstantiatingConfigurationParameterConverter,org.junit.platform.launcher.core.LauncherConfig")
+    buildArgs.add("--initialize-at-build-time=org.junit.platform.launcher.core.DefaultLauncherConfig")
   }
   metadataRepository {
     enabled = true

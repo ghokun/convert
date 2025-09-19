@@ -86,12 +86,13 @@ dependencies {
 }
 
 application {
+  applicationDefaultJvmArgs = ["-XX:+UseCompactObjectHeaders"]
   mainClass = "dev.gokhun.convert.Convert"
 }
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(24)
+    languageVersion = JavaLanguageVersion.of(25)
     nativeImageCapable = true
   }
 }
@@ -140,6 +141,8 @@ tasks.register("generatePackage", Zip) {
   from layout.buildDirectory.dir("native")
   include "${archiveName}/**"
 }
+
+
 
 tasks.withType(JavaCompile).configureEach {
   dependsOn("generateVersionProvider")

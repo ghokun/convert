@@ -16,8 +16,6 @@ release:
 distributions:
   convert:
     artifacts:
-      - path: "artifacts-macos-13/dist/{{distributionName}}-{{projectVersion}}-darwin-x86_64.zip"
-        platform: "osx-x86_64"
       - path: "artifacts-macos-latest/dist/{{distributionName}}-{{projectVersion}}-darwin-aarch64.zip"
         platform: "osx-aarch_64"
       - path: "artifacts-ubuntu-latest/dist/{{distributionName}}-{{projectVersion}}-linux-x86_64.zip"

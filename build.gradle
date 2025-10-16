@@ -86,7 +86,9 @@ dependencies {
 }
 
 application {
-  applicationDefaultJvmArgs = ["-XX:+UseCompactObjectHeaders"]
+  applicationDefaultJvmArgs = [
+    "-XX:+UseCompactObjectHeaders"
+  ]
   mainClass = "dev.gokhun.convert.Convert"
 }
 

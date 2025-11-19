@@ -9,8 +9,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public final class HelpSteps {
-  private static final String HELP_OUTPUT =
-      """
+  private static final String HELP_OUTPUT = """
 Usage: convert [-hV] [--deduplicate-keys] [--indent-yaml] [--minimize-yaml-quotes] [--pretty] -f=<input> -o=<output>
                [-s=<csvSeparator>]
 Converts one file type to another.

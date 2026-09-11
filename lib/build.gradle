@@ -1,0 +1,53 @@
+plugins {
+  id "java-library"
+  id "checkstyle"
+  id "com.adarshr.test-logger"
+  id "net.ltgt.errorprone"
+}
+
+dependencies {
+  implementation "com.google.guava:guava:${guavaVersion}"
+
+  implementation platform("com.fasterxml.jackson:jackson-bom:${jacksonVersion}")
+  implementation "com.fasterxml.jackson.core:jackson-core"
+  implementation "com.fasterxml.jackson.core:jackson-databind"
+  implementation "com.fasterxml.jackson.core:jackson-annotations"
+  implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-csv"
+  implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties"
+  implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml"
+  implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
+
+  testImplementation platform("org.junit:junit-bom:${junitVersion}")
+  testImplementation "org.junit.jupiter:junit-jupiter"
+  testImplementation "org.junit.jupiter:junit-jupiter-params"
+  testImplementation "org.junit.platform:junit-platform-engine"
+  testImplementation "org.junit.platform:junit-platform-launcher"
+  testImplementation "org.assertj:assertj-core:${assertjVersion}"
+
+  errorprone "com.google.errorprone:error_prone_core:${errorProneVersion}"
+  errorprone "tech.picnic.error-prone-support:error-prone-contrib:${errorProneSupportVersion}"
+  errorprone "tech.picnic.error-prone-support:refaster-runner:${errorProneSupportVersion}"
+}
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(25)
+  }
+}
+
+checkstyle {
+  checkstyleMain.source = "src/main/java"
+  checkstyleTest.source = "src/test/java"
+}
+
+tasks.withType(JavaCompile).configureEach {
+  options.compilerArgs += [
+    "-Aproject=${project.group}/${project.name}",
+    "-Werror"
+  ]
+  options.errorprone.disableWarningsInGeneratedCode = true
+}
+
+test {
+  useJUnitPlatform()
+}

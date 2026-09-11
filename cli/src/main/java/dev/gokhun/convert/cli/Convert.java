@@ -1,12 +1,12 @@
-package dev.gokhun.convert;
+package dev.gokhun.convert.cli;
 
-import static dev.gokhun.convert.ConversionUtil.convert;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static picocli.CommandLine.ExitCode.OK;
 import static picocli.CommandLine.Help.Ansi.ON;
 import static picocli.CommandLine.Help.defaultColorScheme;
 
-import dev.gokhun.convert.ConversionUtil.ConversionOptions;
+import dev.gokhun.convert.lib.Converter;
+import dev.gokhun.convert.lib.ConverterOptions;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -91,16 +91,17 @@ public final class Convert implements Callable<Integer> {
   @Override
   public Integer call() {
     try {
-      convert(
-          input,
-          output,
-          ConversionOptions.builder()
-              .setCsvSeparator(csvSeparator)
-              .setPretty(pretty)
-              .setIndentYaml(indentYaml)
-              .setMinimizeYamlQuotes(minimizeYamlQuotes)
-              .setDeduplicateKeys(deduplicateKeys)
-              .build());
+      Converter.create()
+          .convert(
+              input,
+              output,
+              ConverterOptions.builder()
+                  .csvSeparator(csvSeparator)
+                  .pretty(pretty)
+                  .indentYaml(indentYaml)
+                  .minimizeYamlQuotes(minimizeYamlQuotes)
+                  .deduplicateKeys(deduplicateKeys)
+                  .build());
     } catch (IllegalArgumentException | IOException e) {
       throw new ConvertAppException(e);
     }

@@ -93,37 +93,37 @@ sdk env
 ./gradlew check
 
 # Compile the project and build a native executable
-./gradlew nativeRun
+./gradlew :cli:nativeRun
 
 # Run the native executable
-./build/native/nativeCompile/convert
+./cli/build/native/nativeCompile/convert
 
 # Run the application with the agent on JVM
-./gradlew -Pagent run
+./gradlew -Pagent :cli:run
 
 # Copy metadata into /META-INF/native-image directory
-./gradlew metadataCopy --task run --dir src/main/resources/META-INF/native-image
+./gradlew :cli:metadataCopy --task run --dir cli/src/main/resources/META-INF/native-image
 
 # Build a native executable using metadata
-./gradlew nativeCompile
+./gradlew :cli:nativeCompile
 
 # Run the native executable
-./build/native/nativeCompile/convert
+./cli/build/native/nativeCompile/convert
 
 # Run JUnit tests
-./gradlew nativeTest
+./gradlew :cli:nativeTest
 
 # Run tests on JVM with the agent
 ./gradlew -Pagent test
 
 # Test building a native executable using metadata
-./gradlew -Pagent nativeTest
+./gradlew -Pagent :cli:nativeTest
 
 # Generate a distributable package with VERSION
-./gradlew -Pversion=${VERSION} nativeCompile generatePackage
+./gradlew -Pversion=${VERSION} :cli:nativeCompile :cli:generatePackage
 
 # End to end test
-./gradlew e2e
+./gradlew :cli:e2e
 ```
 
 ## TODO list

@@ -1,12 +1,12 @@
-package dev.gokhun.convert;
+package dev.gokhun.convert.lib;
 
-import static dev.gokhun.convert.ConversionUtil.ConversionOptions;
-import static dev.gokhun.convert.ConversionUtil.FileType;
-import static dev.gokhun.convert.ConversionUtil.FileType.CSV;
-import static dev.gokhun.convert.ConversionUtil.FileType.JSON;
-import static dev.gokhun.convert.ConversionUtil.FileType.PROPERTIES;
-import static dev.gokhun.convert.ConversionUtil.FileType.TOML;
-import static dev.gokhun.convert.ConversionUtil.FileType.YAML;
+import static dev.gokhun.convert.lib.ConversionUtil.ConversionOptions;
+import static dev.gokhun.convert.lib.ConversionUtil.FileType;
+import static dev.gokhun.convert.lib.ConversionUtil.FileType.CSV;
+import static dev.gokhun.convert.lib.ConversionUtil.FileType.JSON;
+import static dev.gokhun.convert.lib.ConversionUtil.FileType.PROPERTIES;
+import static dev.gokhun.convert.lib.ConversionUtil.FileType.TOML;
+import static dev.gokhun.convert.lib.ConversionUtil.FileType.YAML;
 import static java.lang.Character.LINE_SEPARATOR;
 import static java.lang.Character.SPACE_SEPARATOR;
 import static org.assertj.core.api.Assertions.assertThat;

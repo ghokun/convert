@@ -37,10 +37,10 @@ jobs:
         run: ./gradlew check --no-daemon
 
       - name: 'Native test'
-        run: ./gradlew nativeTest --no-daemon
+        run: ./gradlew :cli:nativeTest --no-daemon
 
       - name: 'Native compile'
-        run: ./gradlew nativeCompile --no-daemon
+        run: ./gradlew :cli:nativeCompile --no-daemon
 
       - name: 'Compress with UPX'
         if: ${{ runner.os == 'Linux' }}
@@ -48,11 +48,11 @@ jobs:
         with:
           version: latest
           files: |
-            ./build/native/nativeCompile/convert
+            ./cli/build/native/nativeCompile/convert
           args: --best
 
       - name: 'Add convert to PATH'
-        run: echo "${{ github.workspace }}/build/native/nativeCompile" >> $GITHUB_PATH
+        run: echo "${{ github.workspace }}/cli/build/native/nativeCompile" >> $GITHUB_PATH
 
       - name: 'End to end test'
-        run: ./gradlew e2e --no-daemon
+        run: ./gradlew :cli:e2e --no-daemon

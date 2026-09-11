@@ -1,4 +1,4 @@
-package dev.gokhun.convert;
+package dev.gokhun.convert.cli;
 
 import static com.google.common.io.Files.getFileExtension;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -10,8 +10,8 @@ import static picocli.CommandLine.ExitCode.USAGE;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import dev.gokhun.convert.Convert.ExecutionExceptionHandler;
-import dev.gokhun.convert.Convert.SystemManager;
+import dev.gokhun.convert.cli.Convert.ExecutionExceptionHandler;
+import dev.gokhun.convert.cli.Convert.SystemManager;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;

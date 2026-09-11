@@ -37,7 +37,7 @@ jobs:
         run: ./gradlew check -Pversion='${{ github.event.inputs.version }}' --no-daemon
 
       - name: 'Build native executable'
-        run: ./gradlew nativeCompile -Pversion='${{ github.event.inputs.version }}' --no-daemon
+        run: ./gradlew :cli:nativeCompile -Pversion='${{ github.event.inputs.version }}' --no-daemon
 
       - name: 'Compress with UPX'
         if: ${{ runner.os == 'Linux' }}
@@ -45,23 +45,23 @@ jobs:
         with:
           version: latest
           files: |
-            ./build/native/nativeCompile/convert
+            ./cli/build/native/nativeCompile/convert
           args: --best
 
       - name: 'Add convert to PATH'
-        run: echo "${{ github.workspace }}/build/native/nativeCompile" >> $GITHUB_PATH
+        run: echo "${{ github.workspace }}/cli/build/native/nativeCompile" >> $GITHUB_PATH
 
       - name: 'End to end test'
-        run: ./gradlew e2e --no-daemon
+        run: ./gradlew :cli:e2e --no-daemon
 
       - name: 'Generate package'
-        run: ./gradlew generatePackage -Pversion='${{ github.event.inputs.version }}' --no-daemon
+        run: ./gradlew :cli:generatePackage -Pversion='${{ github.event.inputs.version }}' --no-daemon
 
       - name: 'Upload build artifact'
         uses: actions/upload-artifact@v7
         with:
           name: artifacts-${{ matrix.os }}
-          path: build/**/*.zip
+          path: cli/build/**/*.zip
 
   release:
     name: 'Release convert'

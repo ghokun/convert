@@ -1,4 +1,4 @@
-package dev.gokhun.convert;
+package dev.gokhun.convert.lib;
 
 import static com.fasterxml.jackson.databind.MapperFeature.SORT_PROPERTIES_ALPHABETICALLY;
 import static com.fasterxml.jackson.dataformat.csv.CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS;
@@ -7,7 +7,7 @@ import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.INDENT
 import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.MINIMIZE_QUOTES;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.io.Files.getFileExtension;
-import static dev.gokhun.convert.ConversionUtil.FileType.fromFileExtension;
+import static dev.gokhun.convert.lib.ConversionUtil.FileType.fromFileExtension;
 import static java.lang.Character.isSpaceChar;
 import static java.lang.Character.isWhitespace;
 import static java.util.Objects.requireNonNull;

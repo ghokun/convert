@@ -26,8 +26,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -36,11 +36,11 @@ import org.yaml.snakeyaml.Yaml;
 final class ConversionUtil {
   private ConversionUtil() {}
 
-  private interface Reader {
+  interface Reader {
     JsonNode read(File file) throws IOException;
   }
 
-  private interface Writer {
+  interface Writer {
     void write(File file, JsonNode jsonNode) throws IOException;
   }
 
@@ -167,7 +167,7 @@ final class ConversionUtil {
 
       @Override
       Reader reader(ConversionOptions options) {
-        return file -> MAPPER.valueToTree(new Yaml().load(new FileInputStream(file)));
+        return file -> MAPPER.valueToTree(new Yaml().load(Files.newInputStream(file.toPath())));
       }
 
       @Override

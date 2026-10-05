@@ -83,9 +83,6 @@ following technologies:
 ## Development
 
 ```bash
-# Switch java version (If you are using SDKMAN!)
-sdk env
-
 # Format code
 ./gradlew spotlessApply
 

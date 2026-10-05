@@ -1,0 +1,50 @@
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+
+plugins {
+  id "org.jetbrains.kotlin.jvm" version "${kotlinVersion}"
+  id "org.jetbrains.kotlin.plugin.compose" version "${kotlinVersion}"
+  id "org.jetbrains.compose" version "${composeVersion}"
+}
+
+dependencies {
+  implementation project(":lib")
+  implementation compose.desktop.currentOs
+  implementation "org.jetbrains.jewel:jewel-int-ui-standalone:${jewelVersion}"
+}
+
+// Compose Multiplatform pulls AndroidX artifacts that live in Google's Maven repo,
+// which the root build does not declare. Keep it scoped to this experiment module.
+repositories {
+  google()
+  mavenCentral()
+}
+
+kotlin {
+  jvmToolchain(25)
+  compilerOptions {
+    jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25)
+  }
+}
+
+// The module has no Java sources; this only aligns the (empty) compileJava task
+// configuration with compileKotlin so the Kotlin plugin's JVM-target validation passes.
+tasks.withType(JavaCompile).configureEach {
+  options.release = 25
+}
+
+compose {
+  desktop {
+    application {
+      mainClass = "dev.gokhun.convert.desktop.MainKt"
+      nativeDistributions {
+        targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+        packageName = "convert"
+        // Project version is 0.0.0-SNAPSHOT, which is not a valid MAJOR.MINOR.PATCH
+        // for jpackage target formats, so pin the installer metadata version here.
+        packageVersion = "1.0.0"
+        description = "Convert files between CSV, JSON, properties, TOML and YAML"
+        vendor = "gokhun"
+      }
+    }
+  }
+}

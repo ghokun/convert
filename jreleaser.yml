@@ -15,6 +15,8 @@ release:
 
 distributions:
   convert:
+    executable:
+      name: convert
     artifacts:
       - path: "artifacts-macos-latest/dist/{{distributionName}}-{{projectVersion}}-darwin-aarch64.zip"
         platform: "osx-aarch_64"

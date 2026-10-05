@@ -124,6 +124,9 @@ tasks.register("copyBinaries", Copy) {
 
   from "${buildDirectory}/native/nativeCompile/convert"
   into binDir
+  filePermissions {
+    unix("rwxr-xr-x")
+  }
 }
 
 tasks.register("generatePackage", Zip) {
@@ -133,8 +136,12 @@ tasks.register("generatePackage", Zip) {
   archiveFileName = "${archiveName}.zip"
   destinationDirectory = layout.buildDirectory.dir("dist")
 
-  from layout.buildDirectory.dir("native")
-  include "${archiveName}/**"
+  from(layout.buildDirectory.dir("native")) {
+    include "${archiveName}/**"
+    filePermissions {
+      unix("rwxr-xr-x")
+    }
+  }
 }
 
 tasks.withType(JavaCompile).configureEach {

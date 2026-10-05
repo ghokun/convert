@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Set;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,7 +26,7 @@ final class ConversionUtilTest {
   @DisplayName("Should return correct type for file extension")
   @MethodSource("validFileExtensionProvider")
   @ParameterizedTest
-  void mapperForFileType1(FileType fileType, ImmutableSet<String> fileExtensions) {
+  void mapperForFileType1(FileType fileType, Set<String> fileExtensions) {
     for (String fileExtension : fileExtensions) {
       assertThat(FileType.fromFileExtension(fileExtension)).isEqualTo(fileType);
     }
@@ -54,11 +54,11 @@ final class ConversionUtilTest {
 
   private static Stream<Arguments> validFileExtensionProvider() {
     return Stream.of(
-        arguments(CSV, ImmutableSet.of("CSV", "csv", "cSV", "csV")),
-        arguments(JSON, ImmutableSet.of("json", "JSON", "jSoN", "JsOn")),
-        arguments(PROPERTIES, ImmutableSet.of("properties", "PROPERTIES", "propertIes")),
-        arguments(TOML, ImmutableSet.of("toml", "TOML", "toMl", "tomL")),
-        arguments(YAML, ImmutableSet.of("yml", "YAML", "yaml", "YML")));
+        arguments(CSV, Set.of("CSV", "csv", "cSV", "csV")),
+        arguments(JSON, Set.of("json", "JSON", "jSoN", "JsOn")),
+        arguments(PROPERTIES, Set.of("properties", "PROPERTIES", "propertIes")),
+        arguments(TOML, Set.of("toml", "TOML", "toMl", "tomL")),
+        arguments(YAML, Set.of("yml", "YAML", "yaml", "YML")));
   }
 
   private static Stream<Arguments> invalidFileExtensionProvider() {

@@ -5,8 +5,6 @@ import static com.fasterxml.jackson.dataformat.csv.CsvGenerator.Feature.ALWAYS_Q
 import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.INDENT_ARRAYS;
 import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR;
 import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.MINIMIZE_QUOTES;
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.io.Files.getFileExtension;
 import static dev.gokhun.convert.lib.ConversionUtil.FileType.fromFileExtension;
 import static java.lang.Character.isSpaceChar;
 import static java.lang.Character.isWhitespace;
@@ -23,17 +21,22 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.fasterxml.jackson.dataformat.toml.TomlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Set;
 import org.yaml.snakeyaml.Yaml;
 
 final class ConversionUtil {
+  // Shared CSV mapper to keep a single instance on the image heap.
+  private static final CsvMapper CSV_MAPPER = new CsvMapper().enable(ALWAYS_QUOTE_STRINGS);
+  private static final CsvSchema CSV_BASE_SCHEMA = CsvSchema.emptySchema().withHeader();
+  private static final char HORIZONTAL_TABULATION = '\t';
+
   private ConversionUtil() {}
 
   interface Reader {
@@ -44,81 +47,39 @@ final class ConversionUtil {
     void write(File file, JsonNode jsonNode) throws IOException;
   }
 
+  static String getFileExtension(String fileName) {
+    var lastDot = fileName.lastIndexOf('.');
+    if (lastDot == -1 || lastDot == fileName.length() - 1) {
+      return "";
+    }
+    return fileName.substring(lastDot + 1);
+  }
+
+  @SuppressWarnings("ImmutableEnumChecker")
   enum FileType {
-    CSV(ImmutableSet.of("csv")) {
-      private static final CsvMapper MAPPER = new CsvMapper().enable(ALWAYS_QUOTE_STRINGS);
-      private static final CsvSchema CSV_SCHEMA = CsvSchema.emptySchema().withHeader();
-
+    CSV(Set.of("csv")) {
       @Override
       Reader reader(ConversionOptions options) {
-        return file -> {
-          var it = MAPPER
-              .readerFor(new TypeReference<LinkedHashMap<String, String>>() {})
-              .with(CSV_SCHEMA.withColumnSeparator(options.csvSeparator()))
-              .readValues(file);
-          var factory = JsonNodeFactory.instance;
-          var result = factory.arrayNode();
-          while (it.hasNextValue()) {
-            result.add(MAPPER.convertValue(it.next(), JsonNode.class));
-          }
-          return result;
-        };
+        return file -> readDelimited(file, options.csvSeparator());
       }
 
       @Override
       Writer writer(ConversionOptions options) {
-        return (file, jsonNode) -> {
-          var csvSchemaBuilder = CsvSchema.builder();
-          var firstObject = jsonNode instanceof ArrayNode ? jsonNode.elements().next() : jsonNode;
-          firstObject.fieldNames().forEachRemaining(csvSchemaBuilder::addColumn);
-          MAPPER
-              .writerFor(JsonNode.class)
-              .with(csvSchemaBuilder
-                  .build()
-                  .withColumnSeparator(options.csvSeparator())
-                  .withHeader())
-              .writeValue(file, jsonNode);
-        };
+        return (file, jsonNode) -> writeDelimited(file, jsonNode, options.csvSeparator());
       }
     },
-    TSV(ImmutableSet.of("tsv")) {
-      private static final CsvMapper MAPPER = new CsvMapper().enable(ALWAYS_QUOTE_STRINGS);
-      private static final CsvSchema CSV_SCHEMA = CsvSchema.emptySchema().withHeader();
-      private static final char HORIZONTAL_TABULATION = '\t';
-
+    TSV(Set.of("tsv")) {
       @Override
       Reader reader(ConversionOptions options) {
-        return file -> {
-          var it = MAPPER
-              .readerFor(new TypeReference<LinkedHashMap<String, String>>() {})
-              .with(CSV_SCHEMA.withColumnSeparator(HORIZONTAL_TABULATION))
-              .readValues(file);
-          var factory = JsonNodeFactory.instance;
-          var result = factory.arrayNode();
-          while (it.hasNextValue()) {
-            result.add(MAPPER.convertValue(it.next(), JsonNode.class));
-          }
-          return result;
-        };
+        return file -> readDelimited(file, HORIZONTAL_TABULATION);
       }
 
       @Override
       Writer writer(ConversionOptions options) {
-        return (file, jsonNode) -> {
-          var csvSchemaBuilder = CsvSchema.builder();
-          var firstObject = jsonNode instanceof ArrayNode ? jsonNode.elements().next() : jsonNode;
-          firstObject.fieldNames().forEachRemaining(csvSchemaBuilder::addColumn);
-          MAPPER
-              .writerFor(JsonNode.class)
-              .with(csvSchemaBuilder
-                  .build()
-                  .withColumnSeparator(HORIZONTAL_TABULATION)
-                  .withHeader())
-              .writeValue(file, jsonNode);
-        };
+        return (file, jsonNode) -> writeDelimited(file, jsonNode, HORIZONTAL_TABULATION);
       }
     },
-    JSON(ImmutableSet.of("json")) {
+    JSON(Set.of("json")) {
       private static final JsonMapper MAPPER = new JsonMapper();
 
       @Override
@@ -134,7 +95,7 @@ final class ConversionUtil {
             .writeValue(file, jsonNode);
       }
     },
-    PROPERTIES(ImmutableSet.of("properties")) {
+    PROPERTIES(Set.of("properties")) {
       private static final JavaPropsMapper MAPPER = JavaPropsMapper.builder()
           .configure(SORT_PROPERTIES_ALPHABETICALLY, true)
           .build();
@@ -149,7 +110,7 @@ final class ConversionUtil {
         return MAPPER::writeValue;
       }
     },
-    TOML(ImmutableSet.of("toml")) {
+    TOML(Set.of("toml")) {
       private static final TomlMapper MAPPER = new TomlMapper();
 
       @Override
@@ -162,11 +123,13 @@ final class ConversionUtil {
         return MAPPER::writeValue;
       }
     },
-    YAML(ImmutableSet.of("yaml", "yml")) {
+    YAML(Set.of("yaml", "yml")) {
       private static final YAMLMapper MAPPER = new YAMLMapper();
 
       @Override
       Reader reader(ConversionOptions options) {
+        // Use SnakeYAML directly so anchors/aliases resolve to their values.
+        // YAMLMapper.readTree keeps alias names (e.g. "*foo") instead.
         return file -> MAPPER.valueToTree(new Yaml().load(Files.newInputStream(file.toPath())));
       }
 
@@ -180,9 +143,9 @@ final class ConversionUtil {
       }
     };
 
-    private final ImmutableSet<String> extensions;
+    private final Set<String> extensions;
 
-    FileType(ImmutableSet<String> extensions) {
+    FileType(Set<String> extensions) {
       this.extensions = extensions;
     }
 
@@ -191,8 +154,9 @@ final class ConversionUtil {
     abstract Writer writer(ConversionOptions options);
 
     static FileType fromFileExtension(String fileExtension) {
-      checkArgument(
-          fileExtension != null && !fileExtension.isBlank(), "File type could not be determined!");
+      if (fileExtension == null || fileExtension.isBlank()) {
+        throw new IllegalArgumentException("File type could not be determined!");
+      }
       return Arrays.stream(values())
           .filter(f -> f.extensions.contains(fileExtension.toLowerCase(Locale.ENGLISH)))
           .findAny()
@@ -208,9 +172,9 @@ final class ConversionUtil {
       boolean minimizeYamlQuotes,
       boolean deduplicateKeys) {
     ConversionOptions {
-      checkArgument(
-          !isWhitespace(csvSeparator) && !isSpaceChar(csvSeparator),
-          "CSV separator can not be blank or whitespace!");
+      if (isWhitespace(csvSeparator) || isSpaceChar(csvSeparator)) {
+        throw new IllegalArgumentException("CSV separator can not be blank or whitespace!");
+      }
     }
 
     static Builder builder() {
@@ -273,9 +237,9 @@ final class ConversionUtil {
       while (it.hasNext()) {
         var next = it.next();
         if (keys.isEmpty()) {
-          keys.addAll(ImmutableList.copyOf(next.fieldNames()).stream()
-              .map(TextNode::valueOf)
-              .toList());
+          var names = new ArrayList<String>();
+          next.fieldNames().forEachRemaining(names::add);
+          keys.addAll(names.stream().map(TextNode::valueOf).toList());
         }
         var value = values.addArray();
         keys.forEach(key -> value.add(next.get(key.asText())));
@@ -284,6 +248,30 @@ final class ConversionUtil {
     }
 
     return original;
+  }
+
+  private static JsonNode readDelimited(File file, char separator) throws IOException {
+    var it = CSV_MAPPER
+        .readerFor(new TypeReference<LinkedHashMap<String, String>>() {})
+        .with(CSV_BASE_SCHEMA.withColumnSeparator(separator))
+        .readValues(file);
+    var factory = JsonNodeFactory.instance;
+    var result = factory.arrayNode();
+    while (it.hasNextValue()) {
+      result.add(CSV_MAPPER.convertValue(it.next(), JsonNode.class));
+    }
+    return result;
+  }
+
+  private static void writeDelimited(File file, JsonNode jsonNode, char separator)
+      throws IOException {
+    var csvSchemaBuilder = CsvSchema.builder();
+    var firstObject = jsonNode instanceof ArrayNode ? jsonNode.elements().next() : jsonNode;
+    firstObject.fieldNames().forEachRemaining(csvSchemaBuilder::addColumn);
+    CSV_MAPPER
+        .writerFor(JsonNode.class)
+        .with(csvSchemaBuilder.build().withColumnSeparator(separator).withHeader())
+        .writeValue(file, jsonNode);
   }
 
   // TODO Just a dummy implementation for now. Consider using java.nio.

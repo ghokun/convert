@@ -42,11 +42,12 @@ public final class ConversionSteps {
 
   @Then("following files contain same content")
   public void followingFilesContainSameContent(DataTable dataTable) {
-    dataTable.asMaps().forEach(row -> assertThat(
-            getFile(tempDir.getAbsolutePath(), row.get(ACTUAL)))
-        .exists()
-        .isFile()
-        .hasSameTextualContentAs(getFile(RESOURCES_DIR, row.get(EXPECTED))));
+    dataTable
+        .asMaps()
+        .forEach(row -> assertThat(getFile(tempDir.getAbsolutePath(), row.get(ACTUAL)))
+            .exists()
+            .isFile()
+            .hasSameTextualContentAs(getFile(RESOURCES_DIR, row.get(EXPECTED))));
   }
 
   private static File getFile(String first, String... more) {

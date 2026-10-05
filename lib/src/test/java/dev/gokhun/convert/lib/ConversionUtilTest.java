@@ -48,8 +48,10 @@ final class ConversionUtilTest {
   void invalidCsvSeparator1(char csvSeparator) {
     assertThatThrownBy(
             () -> ConversionOptions.builder().setCsvSeparator(csvSeparator).build())
-        .isInstanceOfSatisfying(IllegalArgumentException.class, ex -> assertThat(ex.getMessage())
-            .isEqualTo("CSV separator can not be blank or whitespace!"));
+        .isInstanceOfSatisfying(
+            IllegalArgumentException.class,
+            ex -> assertThat(ex.getMessage())
+                .isEqualTo("CSV separator can not be blank or whitespace!"));
   }
 
   private static Stream<Arguments> validFileExtensionProvider() {

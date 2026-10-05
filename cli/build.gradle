@@ -51,7 +51,6 @@ idea {
 
 dependencies {
   implementation project(":lib")
-  implementation "com.google.guava:guava:${guavaVersion}"
 
   implementation "info.picocli:picocli:${picocliVersion}"
   annotationProcessor "info.picocli:picocli-codegen:${picocliVersion}"
@@ -184,11 +183,20 @@ graalvmNative {
         buildArgs.add("-H:+StaticExecutableWithDynamicLibC")
       }
     }
-    buildArgs.add("-march=native")
+    // Optimize for size over throughput. See
+    // https://www.graalvm.org/latest/reference-manual/native-image/optimizations-and-performance/
+    buildArgs.add("-Os")
+    // Compatibility is smaller than native (no AVX/etc duplication) and required for
+    // distributed binaries (brew / GitHub releases) built on CI runners.
+    buildArgs.add("-march=compatibility")
+    // Explicit default: smallest GC. Epsilon would be even smaller for this short-lived CLI
+    // but risks OOM on large files, so keep Serial.
+    buildArgs.add("--gc=serial")
+    buildArgs.add("-Djava.awt.headless=true")
     buildArgs.add("-H:+UnlockExperimentalVMOptions")
     buildArgs.add("-H:IncludeLocales=en")
-    buildArgs.add("-H:Optimize=2")
     buildArgs.add("-H:+RemoveUnusedSymbols")
+    buildArgs.add("-H:+OmitInlinedMethodDebugLineInfo")
     buildArgs.add("--initialize-at-build-time=org.junit.platform.launcher.core.DefaultLauncherConfig")
   }
   metadataRepository {

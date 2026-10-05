@@ -4,48 +4,15 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"dev.gokhun.convert.Convert",
+  "name":"dev.gokhun.convert.cli.Convert",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true
 },
 {
-  "name":"dev.gokhun.convert.VersionProvider",
+  "name":"dev.gokhun.convert.cli.VersionProvider",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"groovy.lang.Closure"
-},
-{
-  "name":"java.lang.Object",
-  "allDeclaredFields":true,
-  "queryAllDeclaredMethods":true
-},
-{
-  "name":"java.nio.file.Path"
-},
-{
-  "name":"java.nio.file.Paths",
-  "methods":[{"name":"get","parameterTypes":["java.lang.String","java.lang.String[]"] }]
-},
-{
-  "name":"java.sql.Connection"
-},
-{
-  "name":"java.sql.Driver"
-},
-{
-  "name":"java.sql.DriverManager",
-  "methods":[{"name":"getConnection","parameterTypes":["java.lang.String"] }, {"name":"getDriver","parameterTypes":["java.lang.String"] }]
-},
-{
-  "name":"java.sql.Time",
-  "methods":[{"name":"<init>","parameterTypes":["long"] }]
-},
-{
-  "name":"java.sql.Timestamp",
-  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
 },
 {
   "name":"java.time.Duration",
@@ -102,10 +69,6 @@
 {
   "name":"java.time.ZonedDateTime",
   "methods":[{"name":"parse","parameterTypes":["java.lang.CharSequence"] }]
-},
-{
-  "name":"java.util.concurrent.atomic.AtomicReference",
-  "fields":[{"name":"value"}]
 },
 {
   "name":"picocli.CommandLine$AutoHelpMixin",

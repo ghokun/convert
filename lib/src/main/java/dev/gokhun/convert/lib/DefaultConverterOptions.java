@@ -1,6 +1,5 @@
 package dev.gokhun.convert.lib;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.Character.isSpaceChar;
 import static java.lang.Character.isWhitespace;
 
@@ -12,8 +11,8 @@ record DefaultConverterOptions(
     boolean deduplicateKeys)
     implements ConverterOptions {
   DefaultConverterOptions {
-    checkArgument(
-        !isWhitespace(csvSeparator) && !isSpaceChar(csvSeparator),
-        "CSV separator can not be blank or whitespace!");
+    if (isWhitespace(csvSeparator) || isSpaceChar(csvSeparator)) {
+      throw new IllegalArgumentException("CSV separator can not be blank or whitespace!");
+    }
   }
 }

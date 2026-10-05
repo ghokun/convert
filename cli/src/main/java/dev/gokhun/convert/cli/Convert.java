@@ -2,7 +2,7 @@ package dev.gokhun.convert.cli;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static picocli.CommandLine.ExitCode.OK;
-import static picocli.CommandLine.Help.Ansi.ON;
+import static picocli.CommandLine.Help.Ansi.OFF;
 import static picocli.CommandLine.Help.defaultColorScheme;
 
 import dev.gokhun.convert.lib.Converter;
@@ -29,7 +29,8 @@ import picocli.CommandLine.ParseResult;
     versionProvider = VersionProvider.class)
 public final class Convert implements Callable<Integer> {
   private static final SystemManager SYSTEM_MANAGER = new DefaultSystemManager();
-  private static final ColorScheme COLOR_SCHEME = defaultColorScheme(ON);
+  // OFF avoids pulling ANSI/Jansi handling into the native image and keeps output plain.
+  private static final ColorScheme COLOR_SCHEME = defaultColorScheme(OFF);
   private static final IExecutionExceptionHandler EXCEPTION_HANDLER =
       new ExecutionExceptionHandler();
   private static final CommandLine CMD = new CommandLine(new Convert())

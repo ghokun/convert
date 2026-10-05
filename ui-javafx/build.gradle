@@ -1,0 +1,52 @@
+plugins {
+  id "java"
+  id "application"
+  id "checkstyle"
+  id "org.openjfx.javafxplugin" version "0.1.0"
+  id "com.gluonhq.gluonfx-gradle-plugin" version "1.0.29"
+}
+
+dependencies {
+  implementation project(":lib")
+}
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(25)
+  }
+}
+
+javafx {
+  version = "25"
+  modules = ["javafx.controls"]
+}
+
+application {
+  mainClass = "dev.gokhun.convert.ui.javafx.ConvertApp"
+}
+
+checkstyle {
+  checkstyleMain.source = "src/main/java"
+}
+
+// Gluon Native Image configuration (experiment, JVM `run` only is verified).
+// `nativeBuild` is wired but NOT verified here: it needs GraalVM + platform SDKs,
+// and full reflection metadata still requires GraalVM agent (`nativeRunAgent`) runs.
+// See src/main/resources/META-INF/gluonfx/reflectionconfig.json for the stub.
+gluonfx {
+  target = "host"
+  appIdentifier = "dev.gokhun.convert.uijavafx"
+  reflectionList = [
+    "com.fasterxml.jackson.databind.ObjectMapper",
+    "com.fasterxml.jackson.dataformat.csv.CsvMapper",
+    "com.fasterxml.jackson.dataformat.yaml.YAMLMapper",
+    "com.fasterxml.jackson.dataformat.toml.TomlMapper",
+    "com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper",
+    "dev.gokhun.convert.lib.DefaultConverter",
+    "dev.gokhun.convert.lib.DefaultConverterOptions"
+  ]
+  resourcesList = [
+    ".*\\.properties",
+    "META-INF/services/.*"
+  ]
+}

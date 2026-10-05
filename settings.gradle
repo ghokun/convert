@@ -2,3 +2,4 @@ rootProject.name = "convert"
 
 include("lib")
 include("cli")
+include("ui-javafx")

@@ -1,8 +1,31 @@
 # desktop (experiment)
 
 Minimal JVM desktop UI for `convert`, built with Compose Multiplatform and styled with the
-Jewel standalone (Int UI) theme. Reuses `:lib` (`Converter.create().convert(...)` file overload).
+Jewel standalone (Int UI) theme. Conversion runs in-memory via `:lib`
+(`Converter.create().convert(InputStream, String, OutputStream, String, ConverterOptions)`).
 This is a spike: desktop-only, no signing, no GraalVM native-image.
+
+## UI
+
+Two side-by-side monospace panes with simple regex syntax highlighting
+(`highlightSyntax` in `Main.kt`: strings green, JSON object keys blue, numbers purple,
+booleans/null orange, `#`/`//` comments gray):
+
+* LEFT: editable input (`BasicTextField` backed by `TextFieldValue`; the displayed
+  `AnnotatedString` is re-highlighted on every change, so the cursor may jump — acceptable
+  for a spike). Prefilled with a small sample JSON document.
+* RIGHT: read-only output inside a `SelectionContainer`, so converted text can be selected
+  and copied.
+
+Input/output format dropdowns (`json`, `yaml`, `csv`, `tsv`, `toml`, `properties`;
+defaults `json` -> `yaml`) select the extensions passed to the stream API: on Convert, the
+input text is wrapped in a `ByteArrayInputStream`, converted into a `ByteArrayOutputStream`,
+and the UTF-8 result is shown in the right pane. Conversion failures are reported in the
+status label.
+
+The options row is unchanged (CSV separator default `","`, pretty-print off, indent-YAML on,
+minimize-YAML-quotes on, deduplicate-keys off), as are the Convert button, the status label,
+and the Jewel `IntUiTheme` dark-theme toggle.
 
 ## Jewel's new home
 

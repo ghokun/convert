@@ -1,0 +1,26 @@
+.code-area {
+  -fx-font-family: monospace;
+  -fx-font-size: 13px;
+}
+.string {
+  -fx-fill: #0a7d0a;
+}
+.number {
+  -fx-fill: #1a00ff;
+}
+.boolean {
+  -fx-fill: #7a00b5;
+  -fx-font-weight: bold;
+}
+.null {
+  -fx-fill: #7a00b5;
+  -fx-font-weight: bold;
+}
+.comment {
+  -fx-fill: #808080;
+  -fx-font-style: italic;
+}
+.key {
+  -fx-fill: #b35e00;
+  -fx-font-weight: bold;
+}

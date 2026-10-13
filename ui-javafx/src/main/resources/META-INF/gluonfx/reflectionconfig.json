@@ -1,0 +1,38 @@
+[
+  {
+    "name": "com.fasterxml.jackson.databind.ObjectMapper",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "com.fasterxml.jackson.dataformat.csv.CsvMapper",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "com.fasterxml.jackson.dataformat.yaml.YAMLMapper",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "com.fasterxml.jackson.dataformat.toml.TomlMapper",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  }
+]

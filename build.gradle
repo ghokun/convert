@@ -30,7 +30,7 @@ subprojects {
 
 spotless {
   java {
-    target "lib/src/*/java/**/*.java", "cli/src/*/java/**/*.java"
+    target "lib/src/*/java/**/*.java", "cli/src/*/java/**/*.java", "ui-javafx/src/*/java/**/*.java"
     importOrder()
     removeUnusedImports()
     cleanthat()
@@ -38,7 +38,7 @@ spotless {
     formatAnnotations()
   }
   groovyGradle {
-    target "*.gradle", "lib/*.gradle", "cli/*.gradle"
+    target "*.gradle", "lib/*.gradle", "cli/*.gradle", "ui-javafx/*.gradle"
     greclipse()
     trimTrailingWhitespace()
     leadingTabsToSpaces(2)
@@ -49,7 +49,7 @@ spotless {
     gherkinUtils()
   }
   format "misc", {
-    target "*.md", ".gitignore", ".gitattributes"
+    target "*.md", "ui-javafx/*.md", ".gitignore", ".gitattributes"
     trimTrailingWhitespace()
     leadingTabsToSpaces(2)
     endWithNewline()

@@ -9,6 +9,8 @@ import dev.gokhun.convert.lib.Converter;
 import dev.gokhun.convert.lib.ConverterOptions;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -91,11 +93,14 @@ public final class Convert implements Callable<Integer> {
 
   @Override
   public Integer call() {
-    try {
+    try (var in = new FileInputStream(input);
+        var out = new FileOutputStream(output)) {
       Converter.create()
           .convert(
-              input,
-              output,
+              in,
+              fileExtension(input.getName()),
+              out,
+              fileExtension(output.getName()),
               ConverterOptions.builder()
                   .csvSeparator(csvSeparator)
                   .pretty(pretty)
@@ -107,6 +112,14 @@ public final class Convert implements Callable<Integer> {
       throw new ConvertAppException(e);
     }
     return OK;
+  }
+
+  private static String fileExtension(String fileName) {
+    var lastDot = fileName.lastIndexOf('.');
+    if (lastDot == -1 || lastDot == fileName.length() - 1) {
+      return "";
+    }
+    return fileName.substring(lastDot + 1);
   }
 
   public static void main(String... args) {

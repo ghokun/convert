@@ -22,8 +22,11 @@ import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.fasterxml.jackson.dataformat.toml.TomlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -40,11 +43,11 @@ final class ConversionUtil {
   private ConversionUtil() {}
 
   interface Reader {
-    JsonNode read(File file) throws IOException;
+    JsonNode read(InputStream input) throws IOException;
   }
 
   interface Writer {
-    void write(File file, JsonNode jsonNode) throws IOException;
+    void write(OutputStream output, JsonNode jsonNode) throws IOException;
   }
 
   static String getFileExtension(String fileName) {
@@ -60,23 +63,23 @@ final class ConversionUtil {
     CSV(Set.of("csv")) {
       @Override
       Reader reader(ConversionOptions options) {
-        return file -> readDelimited(file, options.csvSeparator());
+        return input -> readDelimited(input, options.csvSeparator());
       }
 
       @Override
       Writer writer(ConversionOptions options) {
-        return (file, jsonNode) -> writeDelimited(file, jsonNode, options.csvSeparator());
+        return (output, jsonNode) -> writeDelimited(output, jsonNode, options.csvSeparator());
       }
     },
     TSV(Set.of("tsv")) {
       @Override
       Reader reader(ConversionOptions options) {
-        return file -> readDelimited(file, HORIZONTAL_TABULATION);
+        return input -> readDelimited(input, HORIZONTAL_TABULATION);
       }
 
       @Override
       Writer writer(ConversionOptions options) {
-        return (file, jsonNode) -> writeDelimited(file, jsonNode, HORIZONTAL_TABULATION);
+        return (output, jsonNode) -> writeDelimited(output, jsonNode, HORIZONTAL_TABULATION);
       }
     },
     JSON(Set.of("json")) {
@@ -89,10 +92,10 @@ final class ConversionUtil {
 
       @Override
       Writer writer(ConversionOptions options) {
-        return (file, jsonNode) -> (options.pretty()
+        return (output, jsonNode) -> (options.pretty()
                 ? MAPPER.writerWithDefaultPrettyPrinter()
                 : MAPPER.writer())
-            .writeValue(file, jsonNode);
+            .writeValue(output, jsonNode);
       }
     },
     PROPERTIES(Set.of("properties")) {
@@ -130,16 +133,16 @@ final class ConversionUtil {
       Reader reader(ConversionOptions options) {
         // Use SnakeYAML directly so anchors/aliases resolve to their values.
         // YAMLMapper.readTree keeps alias names (e.g. "*foo") instead.
-        return file -> MAPPER.valueToTree(new Yaml().load(Files.newInputStream(file.toPath())));
+        return input -> MAPPER.valueToTree(new Yaml().load(input));
       }
 
       @Override
       Writer writer(ConversionOptions options) {
-        return (file, jsonNode) -> MAPPER
+        return (output, jsonNode) -> MAPPER
             .configure(INDENT_ARRAYS, options.indentYaml())
             .configure(INDENT_ARRAYS_WITH_INDICATOR, options.indentYaml())
             .configure(MINIMIZE_QUOTES, options.minimizeYamlQuotes())
-            .writeValue(file, jsonNode);
+            .writeValue(output, jsonNode);
       }
     };
 
@@ -250,11 +253,11 @@ final class ConversionUtil {
     return original;
   }
 
-  private static JsonNode readDelimited(File file, char separator) throws IOException {
+  private static JsonNode readDelimited(InputStream input, char separator) throws IOException {
     var it = CSV_MAPPER
         .readerFor(new TypeReference<LinkedHashMap<String, String>>() {})
         .with(CSV_BASE_SCHEMA.withColumnSeparator(separator))
-        .readValues(file);
+        .readValues(input);
     var factory = JsonNodeFactory.instance;
     var result = factory.arrayNode();
     while (it.hasNextValue()) {
@@ -263,7 +266,7 @@ final class ConversionUtil {
     return result;
   }
 
-  private static void writeDelimited(File file, JsonNode jsonNode, char separator)
+  private static void writeDelimited(OutputStream output, JsonNode jsonNode, char separator)
       throws IOException {
     var csvSchemaBuilder = CsvSchema.builder();
     var firstObject = jsonNode instanceof ArrayNode ? jsonNode.elements().next() : jsonNode;
@@ -271,18 +274,34 @@ final class ConversionUtil {
     CSV_MAPPER
         .writerFor(JsonNode.class)
         .with(csvSchemaBuilder.build().withColumnSeparator(separator).withHeader())
-        .writeValue(file, jsonNode);
+        .writeValue(output, jsonNode);
   }
 
-  // TODO Just a dummy implementation for now. Consider using java.nio.
+  static void convert(
+      InputStream input,
+      String inputExtension,
+      OutputStream output,
+      String outputExtension,
+      ConversionOptions options)
+      throws IOException {
+    requireNonNull(input);
+    requireNonNull(output);
+
+    var reader = fromFileExtension(inputExtension).reader(options);
+    var writer = fromFileExtension(outputExtension).writer(options);
+
+    var data = reader.read(input);
+    writer.write(output, options.deduplicateKeys() ? deduplicateKeys(data) : data);
+  }
+
   static void convert(File input, File output, ConversionOptions options) throws IOException {
     requireNonNull(input);
     requireNonNull(output);
 
-    var reader = fromFileExtension(getFileExtension(input.getName())).reader(options);
-    var writer = fromFileExtension(getFileExtension(output.getName())).writer(options);
-
-    var data = reader.read(input);
-    writer.write(output, options.deduplicateKeys() ? deduplicateKeys(data) : data);
+    try (var in = new FileInputStream(input);
+        var out = new FileOutputStream(output)) {
+      convert(
+          in, getFileExtension(input.getName()), out, getFileExtension(output.getName()), options);
+    }
   }
 }
